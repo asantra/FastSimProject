@@ -354,12 +354,15 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
 
                 /// now modify the theta_p according to the target distribution
                 
-                if(thetap_neutron > 2.9){
+                if(thetap_neutron > 3.0){
                     float randomThetaCrn = -999.0;
-                    while(randomThetaCrn < 2.9){
-                        randomThetaCrn = thetapUpNtrnTrgt->GetRandom();
-                    }
-                    cout << "modified theta " << randomThetaCrn << endl;
+                    // draw from 1D distribution, keep it only when it is > 3.0
+                    // while(randomThetaCrn < 3.0){
+                    //     randomThetaCrn = thetapUpNtrnTrgt->GetRandom();
+                    // }
+                    /// just draw from 1D distribution
+                    randomThetaCrn = thetapUpNtrnTrgt->GetRandom();
+                    // cout << "modified theta " << randomThetaCrn << endl;
                     thetap_neutron = randomThetaCrn;
                 }
 
@@ -390,12 +393,15 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
 
                 /// now modify the theta_p according to the target distribution
                 
-                if(thetap_neutron > 2.9){
+                if(thetap_neutron > 3.0){
                     float randomThetaCrn = -999.0;
-                    while(randomThetaCrn < 2.9){
-                        randomThetaCrn = thetapDnNtrnTrgt->GetRandom();
-                    }
-                    cout << "modified theta " << randomThetaCrn << endl;
+                    // draw from 1D distribution, keep it only when it is > 3.0
+                    // while(randomThetaCrn < 3.0){
+                    //     randomThetaCrn = thetapDnNtrnTrgt->GetRandom();
+                    // }
+                    /// just draw from 1D distribution
+                    randomThetaCrn = thetapDnNtrnTrgt->GetRandom();
+                    // cout << "modified theta " << randomThetaCrn << endl;
                     thetap_neutron = randomThetaCrn;
                 }
 
@@ -512,12 +518,15 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 thetap_photon = dump_plane_bkg_rUp_track_theta_photon_cut_1D->GetRandom();
                 /// now modify the theta_p according to the target distribution
                 
-                if(thetap_photon > 2.9){
+                if(thetap_photon > 3.0){
                     float randomThetaCrn = -999.0;
-                    while(randomThetaCrn < 2.9){
-                        randomThetaCrn = thetapUpPhotTrgt->GetRandom();
-                    }
-                    cout << "modified theta in photon " << randomThetaCrn << endl;
+                    // draw from 1D distribution, keep it only when it is > 3.0
+                    // while(randomThetaCrn < 3.0){
+                    //     randomThetaCrn = thetapUpPhotTrgt->GetRandom();
+                    // }
+                    /// just draw from 1D distribution
+                    randomThetaCrn = thetapUpPhotTrgt->GetRandom();
+                    // cout << "modified theta in photon " << randomThetaCrn << endl;
                     thetap_photon = randomThetaCrn;
                 }
 
@@ -547,12 +556,15 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 int rBinValue =  dump_plane_bkg_track_rDn_track_theta_photon_cut->FindBin(r_photon);
                 TH1D* dump_plane_bkg_rDn_track_theta_photon_cut_1D = dump_plane_bkg_track_rDn_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_photon_cut_1D", rBinValue, rBinValue);
                 thetap_photon = dump_plane_bkg_rDn_track_theta_photon_cut_1D->GetRandom();
-                if(thetap_photon > 2.9){
+                if(thetap_photon > 3.0){
                     float randomThetaCrn = -999.0;
-                    while(randomThetaCrn < 2.9){
-                        randomThetaCrn = thetapDnPhotTrgt->GetRandom();
-                    }
-                    cout << "modified theta in photon " << randomThetaCrn << endl;
+                    // draw from 1D distribution, keep it only when it is > 3.0
+                    // while(randomThetaCrn < 3.0){
+                    //     randomThetaCrn = thetapDnPhotTrgt->GetRandom();
+                    // }
+                    /// just draw from 1D distribution
+                    randomThetaCrn = thetapDnPhotTrgt->GetRandom();
+                    // cout << "modified theta in photon " << randomThetaCrn << endl;
                     thetap_photon = randomThetaCrn;
                 }
 

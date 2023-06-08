@@ -556,11 +556,11 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                     thetaWeight  = 1./(2*TMath::Pi()*TMath::Sin(thetap_photon));
             
                 allHisto1Dict["dump_plane_bkg_track_rDn_photon_weighted"]->Fill(r_photon, rWeight);
-                allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_weighted"]->Fill(r_photon, thetap_photon, rWeight*thetaWeight*bin_thetap);
+                allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_weighted"]->Fill(r_photon, thetap_photon, rWeight*thetaWeight*weight_thetaDist);
                 allHisto1Dict["dump_plane_bkg_track_rDn_photon"]->Fill(r_photon);
                 allHisto1Dict["dump_plane_bkg_track_xDn_photon"]->Fill(x_photon);
-                allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon"]->Fill(r_photon, thetap_photon, bin_thetap);
-                allHisto1Dict["dump_plane_bkg_track_thetaDn_photon"]->Fill(thetap_photon, thetaWeight*bin_thetap);
+                allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon"]->Fill(r_photon, thetap_photon, weight_thetaDist);
+                allHisto1Dict["dump_plane_bkg_track_thetaDn_photon"]->Fill(thetap_photon, thetaWeight*weight_thetaDist);
 
             }
             //dump_plane_bkg_track_phi_pos_phi_photon_cut.GetRandom2(phip_photon, phi_photon) 

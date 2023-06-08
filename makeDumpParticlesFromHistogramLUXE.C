@@ -63,6 +63,16 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
 
 
+    //// first prepare the theta weights
+    /// weight file from FullSim
+    std::string targetFileName  = bkgFileName;
+    TFile *weightFile           = new TFile(targetFileName.c_str(), "READ");
+    TH1D *thetapDnNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_neutron_weighted_cut");
+    TH1D *thetapUpNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaUp_neutron_weighted_cut");
+    TH1D *thetapDnPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
+    TH1D *thetapUpPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
+
+
     /// get the 2D plots required for sampling
     std::string foutname    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
     foutname                = foutname.substr(0, foutname.find_last_of("."));
@@ -169,7 +179,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     std::string foutname2    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
     foutname2                = foutname2.substr(0, foutname2.find_last_of("."));
     std::string rootoutname2 = inDir+foutname2;
-    rootoutname2             += std::string("_RandomGeneration_")+part+std::string(".root");
+    rootoutname2             += std::string("_RandomGeneration_")+part+std::string("_ThetaFrom1DInBckwrd.root");
     
     TFile *outFile       = new TFile(rootoutname2.c_str(), "RECREATE");
     outFile->cd();
@@ -342,6 +352,17 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 TH1D *dump_plane_bkg_rUp_track_theta_neutron_cut_1D = dump_plane_bkg_track_rUp_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_neutron_cut_1D", rBinValue, rBinValue);
                 thetap_neutron = dump_plane_bkg_rUp_track_theta_neutron_cut_1D->GetRandom();
 
+                /// now modify the theta_p according to the target distribution
+                
+                if(thetap_neutron > 2.9){
+                    float randomThetaCrn = -999.0;
+                    while(randomThetaCrn < 2.9){
+                        randomThetaCrn = thetapUpNtrnTrgt->GetRandom();
+                    }
+                    cout << "modified theta " << randomThetaCrn << endl;
+                    thetap_neutron = randomThetaCrn;
+                }
+
                 if (r_neutron < 2.01)
                     rWeight      = 1./(2*TMath::Pi()*1.0);
                 else
@@ -366,6 +387,17 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 int rBinValue =  dump_plane_bkg_track_rDn_track_theta_neutron_cut->FindBin(r_neutron);
                 TH1D* dump_plane_bkg_rDn_track_theta_neutron_cut_1D = dump_plane_bkg_track_rDn_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_neutron_cut_1D", rBinValue, rBinValue);
                 thetap_neutron = dump_plane_bkg_rDn_track_theta_neutron_cut_1D->GetRandom();
+
+                /// now modify the theta_p according to the target distribution
+                
+                if(thetap_neutron > 2.9){
+                    float randomThetaCrn = -999.0;
+                    while(randomThetaCrn < 2.9){
+                        randomThetaCrn = thetapDnNtrnTrgt->GetRandom();
+                    }
+                    cout << "modified theta " << randomThetaCrn << endl;
+                    thetap_neutron = randomThetaCrn;
+                }
 
                 if (r_neutron < 2.01)
                     rWeight      = 1./(2*TMath::Pi()*1.0);
@@ -478,6 +510,16 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 int rBinValue =  dump_plane_bkg_track_rUp_track_theta_photon_cut->GetXaxis()->FindBin(r_photon);
                 TH1D *dump_plane_bkg_rUp_track_theta_photon_cut_1D = dump_plane_bkg_track_rUp_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_photon_cut_1D", rBinValue, rBinValue);
                 thetap_photon = dump_plane_bkg_rUp_track_theta_photon_cut_1D->GetRandom();
+                /// now modify the theta_p according to the target distribution
+                
+                if(thetap_photon > 2.9){
+                    float randomThetaCrn = -999.0;
+                    while(randomThetaCrn < 2.9){
+                        randomThetaCrn = thetapUpPhotTrgt->GetRandom();
+                    }
+                    cout << "modified theta in photon " << randomThetaCrn << endl;
+                    thetap_photon = randomThetaCrn;
+                }
 
                 if (r_photon < 2.01)
                     rWeight      = 1./(2*TMath::Pi()*1.0);
@@ -505,6 +547,14 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 int rBinValue =  dump_plane_bkg_track_rDn_track_theta_photon_cut->FindBin(r_photon);
                 TH1D* dump_plane_bkg_rDn_track_theta_photon_cut_1D = dump_plane_bkg_track_rDn_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_photon_cut_1D", rBinValue, rBinValue);
                 thetap_photon = dump_plane_bkg_rDn_track_theta_photon_cut_1D->GetRandom();
+                if(thetap_photon > 2.9){
+                    float randomThetaCrn = -999.0;
+                    while(randomThetaCrn < 2.9){
+                        randomThetaCrn = thetapDnPhotTrgt->GetRandom();
+                    }
+                    cout << "modified theta in photon " << randomThetaCrn << endl;
+                    thetap_photon = randomThetaCrn;
+                }
 
                 if (r_photon < 2.01)
                     rWeight      = 1./(2*TMath::Pi()*1.0);
@@ -590,7 +640,9 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     }
         
     outFile->Close();
+    weightFile->Close();
     delete outFile;
+    delete weightFile;
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<seconds>(stop - start);
     cout << "time taken for the running: " << duration.count() << " s" << endl;

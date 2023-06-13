@@ -99,6 +99,40 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
     
     const double x0 = -92.65;
+
+
+
+
+
+
+    //// weight files for theta
+    //// first prepare the theta weights
+    /// weight file from FullSim
+    std::string targetFileName  = inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn.root";
+    TFile *weightFile           = new TFile(targetFileName.c_str(), "READ");
+    TH1D* thetapDnNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_neutron_weighted_cut");
+    TH1D* thetapUpNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaUp_neutron_weighted_cut");
+    TH1D* thetapDnPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
+    TH1D* thetapUpPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
+
+    /// unweighted Fast Sampling file
+    std::string srcFileName     = inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn_MoreStatBackward_RandomGeneration_Part1.root";
+    TFile *unweightSampling     = new TFile(srcFileName.c_str(),"READ");
+    TH1D* thetapDnNtrnSrc       = (TH1D*)unweightSampling->Get("dump_plane_bkg_track_thetaDn_neutron");
+    TH1D* thetapUpNtrnSrc       = (TH1D*)unweightSampling->Get("dump_plane_bkg_track_thetaUp_neutron");
+    TH1D* thetapDnPhotSrc       = (TH1D*)unweightSampling->Get("dump_plane_bkg_track_thetaDn_photon");
+    TH1D* thetapUpPhotSrc       = (TH1D*)unweightSampling->Get("dump_plane_bkg_track_thetaUp_photon");
+
+    /// create the weight files for theta
+    thetapDnNtrnTrgt->Divide(thetapDnNtrnSrc);
+    thetapUpNtrnTrgt->Divide(thetapUpNtrnSrc);
+    thetapDnPhotTrgt->Divide(thetapDnPhotSrc);
+    thetapUpPhotTrgt->Divide(thetapUpPhotSrc);
+
+
+
+
+
     
     ifstream inFile;
     
@@ -113,9 +147,9 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     foutname                = foutname.substr(0, foutname.find_last_of("."));
     std::string rootoutname = inDir+foutname;
     if (cmpPlt)
-        rootoutname             += std::string("_NoECutNtrn_MoreStatBackward_1DComparePlot_v2.root");
+        rootoutname             += std::string("_NoECutNtrn_rvsthetapreweighted_1DComparePlot_v2.root");
     else
-        rootoutname             += std::string("_NoECutNtrn_MoreStatBackward_v2.root");
+        rootoutname             += std::string("_NoECutNtrn_rvsthetapreweighted.root");
 
     cout << "The output file: " << rootoutname.c_str() << endl;
 
@@ -403,7 +437,7 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
             //allHistoDict["dump_plane_bkg_track_energy_photon"]->Fill(energyVal, weight);
         
         
-        ////if(time > 1000): continue;
+        ////// if(time > 1000): continue;
         ////// neutrons;
         if(pdgId == 2112){
             // if(energyVal<1e-7)continue;
@@ -427,28 +461,18 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
                 allHisto1Dict["dump_plane_bkg_track_time_neutron_cut"]->Fill(time, weight);
                 allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut"]->Fill(energyVal, weight);
                 if(vtx_x > x0){
+                    int thetabin        = thetapUpNtrnTrgt->FindBin(theta);
+                    float thetaUpWeight = thetapUpNtrnTrgt->GetBinContent(theta);
                     allHisto1Dict["dump_plane_bkg_track_rUp_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    if(theta > 2.9){
-                        for(int k=0;k<niteration;k++){
-                            allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight/niteration);
-                        }
-                    }
-                    else{
-                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight);
-                    }
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight*thetaUpWeight);
                     allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight);
                     allHisto1Dict["dump_plane_bkg_track_xUp_neutron_cut"]->Fill(xPos, weight);
                 }
                 else{
+                    int thetabin        = thetapDnNtrnTrgt->FindBin(theta);
+                    float thetaDnWeight = thetapDnNtrnTrgt->GetBinContent(theta);
                     allHisto1Dict["dump_plane_bkg_track_rDn_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    if(theta > 2.9){
-                        for(int k=0;k<niteration;k++){
-                            allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight/niteration);
-                        }
-                    }
-                    else{
-                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight);
-                    }
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight*thetaDnWeight);
                     allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight);
                     allHisto1Dict["dump_plane_bkg_track_xDn_neutron_cut"]->Fill(xPos, weight);
                 }
@@ -493,28 +517,18 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
                 allHisto1Dict["dump_plane_bkg_track_energy_photon_cut"]->Fill(energyVal, weight);
                 
                 if(vtx_x > x0){
+                    int thetabin        = thetapUpPhotTrgt->FindBin(theta);
+                    float thetaUpWeight = thetapUpPhotTrgt->GetBinContent(theta);
                     allHisto1Dict["dump_plane_bkg_track_rUp_photon_cut"]->Fill(rValue, rWeight*weight);
-                    if(theta > 2.9){
-                        for(int k=0;k<niteration;k++){
-                            allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight/niteration);
-                        }
-                    }
-                    else{
-                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight);
-                    }
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight*thetaUpWeight);
                     allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut"]->Fill(theta, thetaWeight*weight);
                     allHisto1Dict["dump_plane_bkg_track_xUp_photon_cut"]->Fill(xPos, weight);
                 }
                 else{
+                    int thetabin        = thetapDnPhotTrgt->FindBin(theta);
+                    float thetaDnWeight = thetapDnPhotTrgt->GetBinContent(theta);
                     allHisto1Dict["dump_plane_bkg_track_rDn_photon_cut"]->Fill(rValue, rWeight*weight);
-                    if(theta > 2.9){
-                        for(int k=0;k<niteration;k++){
-                            allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight/niteration);
-                        }
-                    }
-                    else{
-                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight);
-                    }
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight*thetaDnWeight);
                     allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut"]->Fill(theta, thetaWeight*weight);
                     allHisto1Dict["dump_plane_bkg_track_xDn_photon_cut"]->Fill(xPos, weight);
                 }
@@ -552,7 +566,11 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     }
     
     outFile->Close();
+    weightFile->Close();
+    unweightSampling->Close();
     delete outFile;
+    delete weightFile;
+    delete unweightSampling;
     std::cout << "total neutron: " << nntrn << std::endl;
     std::cout << "total photon: " << npho << std::endl;
     auto stop = high_resolution_clock::now();

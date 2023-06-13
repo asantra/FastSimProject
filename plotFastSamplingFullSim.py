@@ -137,7 +137,7 @@ def main():
     parser.add_argument('-det', action="store", dest="detid", type=str, default="33")
     args = parser.parse_args()
 
-    outDir = "RandomFastSamplingvsFullSimLUXE_ThetaFrom1DInBckwrd"
+    outDir = "RandomFastSamplingvsFullSimLUXE_rvsthetapreweighted"
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -173,9 +173,9 @@ def main():
         # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat.root","READ")
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat_RandomGeneration_v1_Part2C.root", "READ")
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_RandomGeneration_Part1SmallStat.root", "READ")
-        fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_MoreStatBackward_1DComparePlot.root","READ")
+        fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_rvsthetapreweighted_1DComparePlot_v2.root","READ")
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_MoreStatBackward_RandomGeneration_Part1.root", "READ")
-        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_RandomGeneration_v2_ThetaFrom1DInBckwrd.root", "READ")
+        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_rvsthetapreweighted_RandomGeneration_v2_ThetaFrom1DInBckwrd.root", "READ")
     except:
         print("Something wrong in the files")
         exit()

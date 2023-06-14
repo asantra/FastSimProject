@@ -23,7 +23,9 @@ using namespace std::chrono;
 /// energy and time bins
 const int nbins=450;
 /// r bins
-const int nRBins = 6300;
+// const int nRBins = 6300;
+// coarse binning
+const int nRBins = 1800;
 /// x/y bins
 const int nXBins = 6600;
 
@@ -45,7 +47,7 @@ vector<double> getTrackThetaPhi(double x, double y, double z){
 /// total neutron: 210410
 /// total photon: 56555 
 
-void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn.root", int bx=1, int nphot=1353100, int nntrn=5497735, string part="v2"){
+void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn.root", int nntrn=5497735, int nphot=1353100, int bx=1, string part="v2"){
 // void makeDumpParticlesFromHistogramLUXE(string bkgFileName, int bx, int nphot, int nntrn, string part){
     
     
@@ -61,17 +63,6 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     cout << "From the code: working on " << part << endl;
 
     string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
-
-
-    //// first prepare the theta weights
-    /// weight file from FullSim
-    std::string targetFileName  = bkgFileName;
-    TFile *weightFile           = new TFile(targetFileName.c_str(), "READ");
-    TH1D *thetapDnNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_neutron_weighted_cut");
-    TH1D *thetapUpNtrnTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaUp_neutron_weighted_cut");
-    TH1D *thetapDnPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
-    TH1D *thetapUpPhotTrgt      = (TH1D*)weightFile->Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut");
-
 
     /// get the 2D plots required for sampling
     std::string foutname    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
@@ -131,14 +122,26 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     }
     
     
+    /// fine binning in r, hence bin width of 1 upto 6000
+    // double rarray[nRBins+1] = {0.0};
+    // for(int i=0; i < nRBins+1; ++i){
+    //     if (i*4 < 6000)
+    //         rarray[i] = (i*4);
+    //     else if (i < 6200)
+    //         rarray[i] = (6000+(i-6000)*10);
+    //     else
+    //         rarray[i] = (8000+(i-6200)*20);
+    // }
+    
+    /// coarse binning in r, hence bin width of 1 upto 6000
     double rarray[nRBins+1] = {0.0};
     for(int i=0; i < nRBins+1; ++i){
-        if (i < 6000)
-            rarray[i] = (i*1);
-        else if (i < 6200)
-            rarray[i] = (6000+(i-6000)*10);
+        if (i*4 < 6000)
+            rarray[i] = (i*4);
+        else if (i >= 1500 && i < 1700)
+            rarray[i] = (6000+(i-1500)*10);
         else
-            rarray[i] = (8000+(i-6200)*20);
+            rarray[i] = (8000+(i-1700)*20);
     }
     
     double xyarray[nXBins+1] = {0.0};
@@ -171,15 +174,12 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     map<string, TH2D*> allHisto2Dict;
     
     
-    ////// output root file containing the photon and neutron information
-    
-    // outFile       = TFile(inDir+'/'+withoutText+"_RandomGeneration_v7.root", "RECREATE")
-    
+    ////// output root file containing the photon and neutron information    
     
     std::string foutname2    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
     foutname2                = foutname2.substr(0, foutname2.find_last_of("."));
     std::string rootoutname2 = inDir+foutname2;
-    rootoutname2             += std::string("_RandomGeneration_")+part+std::string("_ThetaFrom1DInBckwrd.root");
+    rootoutname2             += std::string("_RandomGeneration_")+part+std::string(".root");
     
     TFile *outFile       = new TFile(rootoutname2.c_str(), "RECREATE");
     outFile->cd();
@@ -241,6 +241,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     Tracks->Branch("nsecondary", &nsecondary);
     Tracks->Branch("esecondary", &esecondary);
 
+
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_neutron_cut", new TH1D("dump_plane_bkg_track_x_neutron_cut","dump_plane_bkg_track_x_neutron_cut; track x [mm]; Events",nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_neutron_cut", new TH1D("dump_plane_bkg_track_y_neutron_cut","dump_plane_bkg_track_y_neutron_cut; track y [mm]; Events",nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_photon_cut", new TH1D("dump_plane_bkg_track_x_photon_cut","dump_plane_bkg_track_x_photon_cut; track x [mm]; Events",nXBins, xyarray)));
@@ -248,8 +249,8 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_E_neutron", new TH1D("dump_plane_bkg_track_E_neutron","dump_plane_bkg_track_E_neutron; E [GeV]; Events", nbins, xarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_E_photon", new TH1D("dump_plane_bkg_track_E_photon","dump_plane_bkg_track_E_photon; E [GeV]; Events", nbins, xarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_neutron", new TH1D("dump_plane_bkg_track_time_neutron","dump_plane_bkg_track_time_neutron; t [ns]; Events", nbins, tarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_weighted", new TH1D("dump_plane_bkg_track_theta_neutron_weighted","dump_plane_bkg_track_theta_neutron_weighted; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_weighted", new TH1D("dump_plane_bkg_track_theta_photon_weighted","dump_plane_bkg_track_theta_photon_weighted; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_weighted", new TH1D("dump_plane_bkg_track_theta_neutron_weighted","dump_plane_bkg_track_theta_neutron_weighted; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_weighted", new TH1D("dump_plane_bkg_track_theta_photon_weighted","dump_plane_bkg_track_theta_photon_weighted; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron_weighted", new TH1D("dump_plane_bkg_track_rUp_neutron_weighted","dump_plane_bkg_track_rUp_neutron_weighted; r [mm]; Events", nRBins, rarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_photon_weighted", new TH1D("dump_plane_bkg_track_rUp_photon_weighted","dump_plane_bkg_track_rUp_photon_weighted; r [mm]; Events", nRBins, rarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_neutron_weighted", new TH1D("dump_plane_bkg_track_rDn_neutron_weighted","dump_plane_bkg_track_rDn_neutron_weighted; r [mm]; Events", nRBins, rarray)));
@@ -258,10 +259,10 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_photon", new TH1D("dump_plane_bkg_track_xUp_photon","dump_plane_bkg_track_xUp_photon; x [mm]; Events", nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron", new TH1D("dump_plane_bkg_track_xDn_neutron","dump_plane_bkg_track_xDn_neutron; x [mm]; Events", nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon", new TH1D("dump_plane_bkg_track_xDn_photon","dump_plane_bkg_track_xDn_photon; x [mm]; Events", nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron", new TH1D("dump_plane_bkg_track_thetaUp_neutron","dump_plane_bkg_track_thetaUp_neutron; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron", new TH1D("dump_plane_bkg_track_thetaDn_neutron","dump_plane_bkg_track_thetaDn_neutron; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon", new TH1D("dump_plane_bkg_track_thetaUp_photon","dump_plane_bkg_track_thetaUp_photon; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon", new TH1D("dump_plane_bkg_track_thetaDn_photon","dump_plane_bkg_track_thetaDn_photon; #theta_{p} [rad]; Events", 6400, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron", new TH1D("dump_plane_bkg_track_thetaUp_neutron","dump_plane_bkg_track_thetaUp_neutron; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron", new TH1D("dump_plane_bkg_track_thetaDn_neutron","dump_plane_bkg_track_thetaDn_neutron; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon", new TH1D("dump_plane_bkg_track_thetaUp_photon","dump_plane_bkg_track_thetaUp_photon; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon", new TH1D("dump_plane_bkg_track_thetaDn_photon","dump_plane_bkg_track_thetaDn_photon; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron", new TH1D("dump_plane_bkg_track_phi_neutron","dump_plane_bkg_track_phi_neutron; #phi_{p} [rad]; Events", 6400, -3.2, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon", new TH1D("dump_plane_bkg_track_phi_photon","dump_plane_bkg_track_phi_photon; #phi_{p} [rad]; Events", 6400, -3.2, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron", new TH1D("dump_plane_bkg_track_rUp_neutron","dump_plane_bkg_track_rUp_neutron; r [mm]; Events", nRBins, rarray)));
@@ -277,14 +278,14 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_E_time_neutron", new TH2D("dump_plane_bkg_track_E_time_neutron","dump_plane_bkg_track_E_time_neutron; t [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_neutron", new TH2D("dump_plane_bkg_track_phi_pos_phi_neutron","dump_plane_bkg_track_phi_pos_phi_neutron; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_photon", new TH2D("dump_plane_bkg_track_phi_pos_phi_photon","dump_plane_bkg_track_phi_pos_phi_photon; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron_weighted", new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron_weighted","dump_plane_bkg_track_rUp_track_theta_neutron_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon_weighted", new TH2D("dump_plane_bkg_track_rUp_track_theta_photon_weighted","dump_plane_bkg_track_rUp_track_theta_photon_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron", new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron","dump_plane_bkg_track_rUp_track_theta_neutron; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon", new TH2D("dump_plane_bkg_track_rUp_track_theta_photon","dump_plane_bkg_track_rUp_track_theta_photon; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron_weighted", new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron_weighted","dump_plane_bkg_track_rDn_track_theta_neutron_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon_weighted", new TH2D("dump_plane_bkg_track_rDn_track_theta_photon_weighted","dump_plane_bkg_track_rDn_track_theta_photon_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron", new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron","dump_plane_bkg_track_rDn_track_theta_neutron; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon", new TH2D("dump_plane_bkg_track_rDn_track_theta_photon","dump_plane_bkg_track_rDn_track_theta_photon; r [mm]; #theta_{p} [rad]",nRBins, rarray, 6400, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron_weighted", new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron_weighted","dump_plane_bkg_track_rUp_track_theta_neutron_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon_weighted", new TH2D("dump_plane_bkg_track_rUp_track_theta_photon_weighted","dump_plane_bkg_track_rUp_track_theta_photon_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron", new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron","dump_plane_bkg_track_rUp_track_theta_neutron; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon", new TH2D("dump_plane_bkg_track_rUp_track_theta_photon","dump_plane_bkg_track_rUp_track_theta_photon; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron_weighted", new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron_weighted","dump_plane_bkg_track_rDn_track_theta_neutron_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon_weighted", new TH2D("dump_plane_bkg_track_rDn_track_theta_photon_weighted","dump_plane_bkg_track_rDn_track_theta_photon_weighted; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron", new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron","dump_plane_bkg_track_rDn_track_theta_neutron; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon", new TH2D("dump_plane_bkg_track_rDn_track_theta_photon","dump_plane_bkg_track_rDn_track_theta_photon; r [mm]; #theta_{p} [rad]",nRBins, rarray, 800, 1.6, 3.2)));
     
 
 
@@ -652,9 +653,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     }
         
     outFile->Close();
-    weightFile->Close();
     delete outFile;
-    delete weightFile;
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<seconds>(stop - start);
     cout << "time taken for the running: " << duration.count() << " s" << endl;

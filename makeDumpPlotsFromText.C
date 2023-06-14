@@ -130,6 +130,7 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     //     else
     //         rarray[i] = (8000+(i-6200)*20);
     // }
+    
     /// coarse binning in r, hence bin width of 1 upto 6000
     double rarray[nRBins+1] = {0.0};
     for(int i=0; i < nRBins+1; ++i){

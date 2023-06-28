@@ -135,9 +135,11 @@ def main():
 
     parser = argparse.ArgumentParser(description='Code to get 2D plots')
     parser.add_argument('-det', action="store", dest="detid", type=str, default="33")
+    parser.add_argument('-times', action="store", dest="weightValue", type=str, default="1.0")
     args = parser.parse_args()
 
-    outDir = "RandomFastSamplingvsFullSimLUXE_CoarseBinning"
+    outDir = "RandomFastSamplingvsFullSimLUXE_CoarseBinning_"+args.weightValue+"timesBackwardInThetaMore3AndRLess300"
+
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -170,15 +172,9 @@ def main():
     #fullSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId"+args.detid+"_trackInfo.root","READ")
     #fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId33_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
     try:
-        # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat.root","READ")
-        # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_rvsthetapreweighted_1DComparePlot_v2.root","READ")
-        fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_1DComparePlot.root","READ")
+        fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_1DComparePlot.root", "READ")
         
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat_RandomGeneration_v1_Part2C.root", "READ")
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_RandomGeneration_Part1SmallStat.root", "READ")
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_MoreStatBackward_RandomGeneration_Part1.root", "READ")
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_rvsthetapreweighted_RandomGeneration_v2_ThetaFrom1DInBckwrd.root", "READ")
-        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_RandomGeneration_v2.root", "READ")
+        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_"+args.weightValue+"timesBackwardInThetaMore3AndRLess300_RandomGeneration_v1.root", "READ")
     except:
         print("Something wrong in the files")
         exit()
@@ -187,6 +183,8 @@ def main():
     dump_plane_bkg_track_rDn_photon_cut              = fullSimFile.Get("dump_plane_bkg_track_rDn_photon_cut")
     dump_plane_bkg_track_thetaUp_photon_weighted_cut = fullSimFile.Get("dump_plane_bkg_track_thetaUp_photon_weighted_cut")
     dump_plane_bkg_track_thetaDn_photon_weighted_cut = fullSimFile.Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut")
+    dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins = fullSimFile.Get("dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins")
+    dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins = fullSimFile.Get("dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins")
     dump_plane_bkg_track_energy_photon_cut           = fullSimFile.Get("dump_plane_bkg_track_energy_photon_cut")
     dump_plane_bkg_track_time_photon_cut             = fullSimFile.Get("dump_plane_bkg_track_time_photon_cut")
     dump_plane_bkg_track_phi_photon_cut              = fullSimFile.Get("dump_plane_bkg_track_phi_photon_cut")
@@ -199,6 +197,8 @@ def main():
     dump_plane_bkg_track_rDn_neutron_cut             = fullSimFile.Get("dump_plane_bkg_track_rDn_neutron_cut")
     dump_plane_bkg_track_thetaUp_neutron_weighted_cut  = fullSimFile.Get("dump_plane_bkg_track_thetaUp_neutron_weighted_cut")
     dump_plane_bkg_track_thetaDn_neutron_weighted_cut  = fullSimFile.Get("dump_plane_bkg_track_thetaDn_neutron_weighted_cut")
+    dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins  = fullSimFile.Get("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins")
+    dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins  = fullSimFile.Get("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins")
     dump_plane_bkg_track_energy_neutron_cut          = fullSimFile.Get("dump_plane_bkg_track_energy_neutron_cut")
     dump_plane_bkg_track_time_neutron_cut            = fullSimFile.Get("dump_plane_bkg_track_time_neutron_cut")
     dump_plane_bkg_track_phi_neutron_cut             = fullSimFile.Get("dump_plane_bkg_track_phi_neutron_cut")
@@ -234,6 +234,8 @@ def main():
     dump_plane_bkg_track_rDn_photon_weighted        = fastSimFile.Get("dump_plane_bkg_track_rDn_photon_weighted")
     dump_plane_bkg_track_thetaUp_photon             = fastSimFile.Get("dump_plane_bkg_track_thetaUp_photon")
     dump_plane_bkg_track_thetaDn_photon             = fastSimFile.Get("dump_plane_bkg_track_thetaDn_photon")
+    dump_plane_bkg_track_thetaUp_photon_morebins             = fastSimFile.Get("dump_plane_bkg_track_thetaUp_photon_morebins")
+    dump_plane_bkg_track_thetaDn_photon_morebins             = fastSimFile.Get("dump_plane_bkg_track_thetaDn_photon_morebins")
     dump_plane_bkg_track_E_photon                   = fastSimFile.Get("dump_plane_bkg_track_E_photon")
     dump_plane_bkg_track_time_photon                = fastSimFile.Get("dump_plane_bkg_track_time_photon")
     dump_plane_bkg_track_phi_photon                 = fastSimFile.Get("dump_plane_bkg_track_phi_photon")
@@ -248,6 +250,8 @@ def main():
     dump_plane_bkg_track_rDn_neutron_weighted       = fastSimFile.Get("dump_plane_bkg_track_rDn_neutron_weighted")
     dump_plane_bkg_track_thetaUp_neutron            = fastSimFile.Get("dump_plane_bkg_track_thetaUp_neutron")
     dump_plane_bkg_track_thetaDn_neutron            = fastSimFile.Get("dump_plane_bkg_track_thetaDn_neutron")
+    dump_plane_bkg_track_thetaUp_neutron_morebins            = fastSimFile.Get("dump_plane_bkg_track_thetaUp_neutron_morebins")
+    dump_plane_bkg_track_thetaDn_neutron_morebins            = fastSimFile.Get("dump_plane_bkg_track_thetaDn_neutron_morebins")
     dump_plane_bkg_track_E_neutron                  = fastSimFile.Get("dump_plane_bkg_track_E_neutron")
     dump_plane_bkg_track_time_neutron               = fastSimFile.Get("dump_plane_bkg_track_time_neutron")
     dump_plane_bkg_track_phi_neutron                = fastSimFile.Get("dump_plane_bkg_track_phi_neutron")
@@ -423,7 +427,6 @@ def main():
 
 
 
-
     FirstTH1    = [dump_plane_bkg_track_thetaDn_photon_weighted_cut, dump_plane_bkg_track_thetaDn_photon]
     for i in range(len(FirstTH1)):
         FirstTH1[i].Rebin(20)
@@ -461,6 +464,68 @@ def main():
     h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
 
     DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName()+"CombinedUpDn", h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+
+    try:
+        FirstTH1    = [dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins, dump_plane_bkg_track_thetaUp_photon_morebins]
+        # for i in range(len(FirstTH1)):
+        #     FirstTH1[i].Rebin(5)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+
+
+        FirstTH1    = [dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins, dump_plane_bkg_track_thetaDn_photon_morebins]
+        # for i in range(len(FirstTH1)):
+        #     FirstTH1[i].Rebin(5)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+        dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins.Add(dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins)
+        dump_plane_bkg_track_thetaUp_photon_morebins.Add(dump_plane_bkg_track_thetaDn_photon_morebins)
+        FirstTH1    = [dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins, dump_plane_bkg_track_thetaUp_photon_morebins]
+        for i in range(len(FirstTH1)):
+            FirstTH1[i].Rebin(5)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = "#theta_{p} [rad]"#FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName()+"CombinedUpDn", h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+    except:
+        print("Something wrong in thetaUp_photon_weighted_cut_morebins")
 
 
     FirstTH1    = [dump_plane_bkg_track_phi_photon_cut, dump_plane_bkg_track_phi_photon]
@@ -720,6 +785,72 @@ def main():
     h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
 
     DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName()+"CombinedUpDn", h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+
+
+    try:
+        FirstTH1    = [dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins, dump_plane_bkg_track_thetaUp_neutron_morebins]
+        # for i in range(len(FirstTH1)):
+        #     FirstTH1[i].Rebin(20)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+
+
+        FirstTH1    = [dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins, dump_plane_bkg_track_thetaDn_neutron_morebins]
+        # for i in range(len(FirstTH1)):
+        #     FirstTH1[i].Rebin(20)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+        dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins.Add(dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins)
+        dump_plane_bkg_track_thetaUp_neutron_morebins.Add(dump_plane_bkg_track_thetaDn_neutron_morebins)
+        FirstTH1    = [dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins, dump_plane_bkg_track_thetaUp_neutron_morebins]
+        for i in range(len(FirstTH1)):
+            FirstTH1[i].Rebin(5)
+
+        xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
+        xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
+        
+        yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
+        yAxisLow    = 0.5
+        
+        xAxisTitle  = "#theta_{p} [rad]"#FirstTH1[0].GetXaxis().GetTitle()
+
+        h2 = FirstTH1[0].Clone("h2")
+        h2.Reset()
+        h2.GetYaxis().SetTitle("#frac{FullSim}{FastSamp}")
+
+        DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName()+"CombinedUpDn", h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+    except:
+        print("Something wrong in thetaUp_neutron_weighted_cut_morebins")
+
+
+    
     
     
     FirstTH1    = [dump_plane_bkg_track_phi_neutron_cut, dump_plane_bkg_track_phi_neutron]

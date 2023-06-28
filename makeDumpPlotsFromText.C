@@ -49,7 +49,7 @@ double getR(double x,double y){
 };
     
 
-void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
+void makeDumpPlotsFromText(string weightBkwd="1.0", string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
     
     auto start = high_resolution_clock::now();
     // "/nfs/dust/luxe/user/santraar/TextSamples_October2021/DumpFromFastSim/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt"
@@ -69,11 +69,12 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     
     std::string foutname    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
     foutname                = foutname.substr(0, foutname.find_last_of("."));
-    std::string rootoutname = inDir+foutname;
+    std::string rootoutname = inDir+foutname;                     
+
     if (cmpPlt)
         rootoutname             += std::string("_NoECutNtrn_CoarseBinning_1DComparePlot.root");
     else
-        rootoutname             += std::string("_NoECutNtrn_CoarseBinning.root");
+        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwd+"timesBackwardInThetaMore3AndRLess300.root");
 
     cout << "The output file: " << rootoutname.c_str() << endl;
 
@@ -94,6 +95,7 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
         
     cout << "zPos: " << zPos << endl;
     cout << "BX selected: " << bx << endl;
+    cout << "Backward weight: " << weightBkwd << endl;
     
     
     TFile *outFile       = new TFile(rootoutname.c_str(), "RECREATE");
@@ -209,7 +211,9 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron_cut",  new TH1D("dump_plane_bkg_track_xDn_neutron_cut","dump_plane_bkg_track_xDn_neutron_cut; x [mm]; Events",nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_cut",  new TH1D("dump_plane_bkg_track_theta_neutron_cut","dump_plane_bkg_track_theta_neutron_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut","dump_plane_bkg_track_thetaUp_neutron_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut","dump_plane_bkg_track_thetaDn_neutron_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron_cut",  new TH1D("dump_plane_bkg_track_phi_neutron_cut","dump_plane_bkg_track_phi_neutron_cut; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
 
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_photon_cut",  new TH1D("dump_plane_bkg_track_x_photon_cut","dump_plane_bkg_track_x_photon_cut; track x [mm]; Events",nXBins, xyarray)));
@@ -221,7 +225,9 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_photon_cut",  new TH1D("dump_plane_bkg_track_xUp_photon_cut","dump_plane_bkg_track_xUp_photon_cut; x [mm]; Events",nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon_cut",  new TH1D("dump_plane_bkg_track_xDn_photon_cut","dump_plane_bkg_track_xDn_photon_cut; x [mm]; Events",nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut","dump_plane_bkg_track_thetaUp_photon_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins","dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut","dump_plane_bkg_track_thetaDn_photon_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins","dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_cut",  new TH1D("dump_plane_bkg_track_theta_photon_cut","dump_plane_bkg_track_theta_photon_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon_cut",  new TH1D("dump_plane_bkg_track_phi_photon_cut","dump_plane_bkg_track_phi_photon_cut; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
     
@@ -233,6 +239,8 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
     double vtx_x(-99999.0), vtx_y(-99999.0), vtx_z(-99999.0);
     int parent_id(-99999), physprocess(-99999);
     double pxx(-99999.0), pyy(-99999.0), pzz(-99999.0), time(-99999.0);
+
+    float bkwdThetaWt(1.0);
     
     int nntrn(0), npho(0);
     int niteration(1); /// the number of times we want to fill the high theta bins
@@ -243,7 +251,7 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
         if(lineCounter%100000==0)
             cout << "processed: " << lineCounter << endl;
 
-        // if(lineCounter > 1000000)
+        // if(lineCounter > 100000)
         //     break;
                 
         
@@ -252,10 +260,10 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
             
         vector<double> angles;
         angles.clear();
-        angles          = getTrackThetaPhi(pxx, pyy, pzz);
+        angles                 = getTrackThetaPhi(pxx, pyy, pzz);
         double theta           = angles.at(0);
         double phi             = angles.at(1);
-        
+
         vector<double> anglesPos;
         anglesPos.clear();
         anglesPos              = getTrackThetaPhi(xPos, yPos, zPos); 
@@ -265,6 +273,15 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
         double rWeight         = 1./(2*TMath::Pi()*rValue);
         double thetaWeight     = 1./(2*TMath::Pi()*TMath::Sin(theta));
         
+        /// weight the backward theta entries by 10%
+        if(cmpPlt)
+            bkwdThetaWt = 1.0;
+        else{
+            if(theta > 3.0 && rValue < 300)
+                bkwdThetaWt = stof(weightBkwd);
+            else
+                bkwdThetaWt = 1.0;
+        } 
         
         
         ////// if(time > 1000): continue;
@@ -292,16 +309,18 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
                 allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut"]->Fill(energyVal, weight);
                 if(vtx_x > x0){
                     allHisto1Dict["dump_plane_bkg_track_rUp_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
                     allHisto1Dict["dump_plane_bkg_track_xUp_neutron_cut"]->Fill(xPos, weight);
                 }
                 else{
                     allHisto1Dict["dump_plane_bkg_track_rDn_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
                     allHisto1Dict["dump_plane_bkg_track_xDn_neutron_cut"]->Fill(xPos, weight);
                 }
                 allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
@@ -338,16 +357,18 @@ void makeDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Gea
                 
                 if(vtx_x > x0){
                     allHisto1Dict["dump_plane_bkg_track_rUp_photon_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut"]->Fill(theta, thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
                     allHisto1Dict["dump_plane_bkg_track_xUp_photon_cut"]->Fill(xPos, weight);
                 }
                 else{
                     allHisto1Dict["dump_plane_bkg_track_rDn_photon_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut"]->Fill(theta, thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                    allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
                     allHisto1Dict["dump_plane_bkg_track_xDn_photon_cut"]->Fill(xPos, weight);
                 }
 

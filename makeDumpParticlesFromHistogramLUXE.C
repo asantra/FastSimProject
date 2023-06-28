@@ -45,9 +45,12 @@ vector<double> getTrackThetaPhi(double x, double y, double z){
 /// total photon: 13531005 
 /// for energy cut > 1e-7 on neutron (small stat)
 /// total neutron: 210410
-/// total photon: 56555 
+/// total photon: 56555
+/// for comparing plot 
+/// nneutron = 549773;
+/// nphoton = 135310;
 
-void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn.root", int nntrn=5497735, int nphot=1353100, int bx=1, string part="v2"){
+void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33_NoECutNtrn.root", int nntrn=5497735, int nphot=1353100, int bx=1, string part="v1"){
 // void makeDumpParticlesFromHistogramLUXE(string bkgFileName, int bx, int nphot, int nntrn, string part){
     
     
@@ -70,6 +73,8 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     std::string inrootname  = inDir+foutname+".root";
     
     TFile *inFile           = new TFile(inrootname.c_str(), "READ");
+
+    cout << "Reading " << inrootname.c_str() << endl;
 
     //////// load histograms from the inRoot file;
     TH2D* dump_plane_bkg_track_x_track_y_neutron_cut                = (TH2D*)inFile->Get("dump_plane_bkg_track_x_track_y_neutron_cut");
@@ -260,9 +265,13 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron", new TH1D("dump_plane_bkg_track_xDn_neutron","dump_plane_bkg_track_xDn_neutron; x [mm]; Events", nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon", new TH1D("dump_plane_bkg_track_xDn_photon","dump_plane_bkg_track_xDn_photon; x [mm]; Events", nXBins, xyarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron", new TH1D("dump_plane_bkg_track_thetaUp_neutron","dump_plane_bkg_track_thetaUp_neutron; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_morebins", new TH1D("dump_plane_bkg_track_thetaUp_neutron_morebins","dump_plane_bkg_track_thetaUp_neutron_morebins; #theta_{p} [rad]; Events", 1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron", new TH1D("dump_plane_bkg_track_thetaDn_neutron","dump_plane_bkg_track_thetaDn_neutron; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_morebins", new TH1D("dump_plane_bkg_track_thetaDn_neutron_morebins","dump_plane_bkg_track_thetaDn_neutron_morebins; #theta_{p} [rad]; Events", 1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon", new TH1D("dump_plane_bkg_track_thetaUp_photon","dump_plane_bkg_track_thetaUp_photon; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_morebins", new TH1D("dump_plane_bkg_track_thetaUp_photon_morebins","dump_plane_bkg_track_thetaUp_photon_morebins; #theta_{p} [rad]; Events", 1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon", new TH1D("dump_plane_bkg_track_thetaDn_photon","dump_plane_bkg_track_thetaDn_photon; #theta_{p} [rad]; Events", 800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_morebins", new TH1D("dump_plane_bkg_track_thetaDn_photon_morebins","dump_plane_bkg_track_thetaDn_photon_morebins; #theta_{p} [rad]; Events", 1600, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron", new TH1D("dump_plane_bkg_track_phi_neutron","dump_plane_bkg_track_phi_neutron; #phi_{p} [rad]; Events", 6400, -3.2, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon", new TH1D("dump_plane_bkg_track_phi_photon","dump_plane_bkg_track_phi_photon; #phi_{p} [rad]; Events", 6400, -3.2, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron", new TH1D("dump_plane_bkg_track_rUp_neutron","dump_plane_bkg_track_rUp_neutron; r [mm]; Events", nRBins, rarray)));
@@ -323,6 +332,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
         weight  = 1.0;  
         for(int nneutron=0; nneutron < n_neutron; ++nneutron){
             if(nneutron%10000==0) cout << "neutron: working on " << nneutron << endl;
+            // if(nneutron>10000)break;
             //////// work with neutrons
             //p_neutron       = dump_plane_bkg_track_energy_neutron_cut.GetRandom()
             float m_neutron       = 0.939565; // GeV
@@ -342,16 +352,24 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
             allHisto1Dict["dump_plane_bkg_track_y_neutron_cut"]->Fill(y_neutron);
             double r_neutron   = sqrt(x_neutron*x_neutron+y_neutron*y_neutron);
             double phi_neutron = atan2(y_neutron, x_neutron);
-            double rWeight     = 999;
-            double thetaWeight = 999;
+            double rWeight     = -999;
+            double thetaWeight = -999;
             double thetap_neutron = -999;
+            double phip_neutron   = -999;
 
 
             ////// project from 2D plots
             if(x_neutron > x0){
-                int rBinValue =  dump_plane_bkg_track_rUp_track_theta_neutron_cut->GetXaxis()->FindBin(r_neutron);
-                TH1D *dump_plane_bkg_rUp_track_theta_neutron_cut_1D = dump_plane_bkg_track_rUp_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_neutron_cut_1D", rBinValue, rBinValue);
-                thetap_neutron = dump_plane_bkg_rUp_track_theta_neutron_cut_1D->GetRandom();
+                try{
+                    int rBinValue =  dump_plane_bkg_track_rUp_track_theta_neutron_cut->GetXaxis()->FindBin(r_neutron);
+                    TH1D *dump_plane_bkg_rUp_track_theta_neutron_cut_1D = dump_plane_bkg_track_rUp_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_neutron_cut_1D", rBinValue, rBinValue);
+                    thetap_neutron = dump_plane_bkg_rUp_track_theta_neutron_cut_1D->GetRandom();
+                    throw(rBinValue);
+                }
+                catch(int rBin){
+                    //cout << "neutron problem at rUp: " << r_neutron << " and " << rBin << endl;
+                    ;
+                }
 
                 /// now modify the theta_p according to the target distribution
                 
@@ -386,11 +404,19 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron"]->Fill(r_neutron, thetap_neutron);
                 allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_weighted"]->Fill(r_neutron, thetap_neutron, rWeight*thetaWeight);
                 allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron"]->Fill(thetap_neutron, thetaWeight);
+                allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_morebins"]->Fill(thetap_neutron, thetaWeight);
             }
             else{
-                int rBinValue =  dump_plane_bkg_track_rDn_track_theta_neutron_cut->FindBin(r_neutron);
-                TH1D* dump_plane_bkg_rDn_track_theta_neutron_cut_1D = dump_plane_bkg_track_rDn_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_neutron_cut_1D", rBinValue, rBinValue);
-                thetap_neutron = dump_plane_bkg_rDn_track_theta_neutron_cut_1D->GetRandom();
+                try{
+                    int rBinValue =  dump_plane_bkg_track_rDn_track_theta_neutron_cut->FindBin(r_neutron);
+                    TH1D* dump_plane_bkg_rDn_track_theta_neutron_cut_1D = dump_plane_bkg_track_rDn_track_theta_neutron_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_neutron_cut_1D", rBinValue, rBinValue);
+                    thetap_neutron = dump_plane_bkg_rDn_track_theta_neutron_cut_1D->GetRandom();
+                    throw(rBinValue);
+                }
+                catch(int rBin){
+                    // cout << "neutron problem at rDn: " << r_neutron << " and " << rBin << endl;
+                    ;
+                }
 
                 /// now modify the theta_p according to the target distribution
                 
@@ -425,11 +451,19 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron"]->Fill(r_neutron, thetap_neutron);
                 allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_weighted"]->Fill(r_neutron, thetap_neutron, rWeight*thetaWeight);
                 allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron"]->Fill(thetap_neutron, thetaWeight);
+                allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_morebins"]->Fill(thetap_neutron, thetaWeight);
             }
-            //dump_plane_bkg_track_phi_pos_phi_neutron_cut.GetRandom2(phip_neutron, phi_neutron) 
-            int phiBin = dump_plane_bkg_track_phi_pos_phi_neutron_cut->GetYaxis()->FindBin(phi_neutron);
-            TH1D *dump_plane_bkg_track_phi_neutron_cut_1D = dump_plane_bkg_track_phi_pos_phi_neutron_cut->ProjectionX("dump_plane_bkg_track_phi_neutron_cut_1D", phiBin, phiBin);
-            double phip_neutron = dump_plane_bkg_track_phi_neutron_cut_1D->GetRandom();
+            //dump_plane_bkg_track_phi_pos_phi_neutron_cut.GetRandom2(phip_neutron, phi_neutron)
+            try{
+                int phiBin = dump_plane_bkg_track_phi_pos_phi_neutron_cut->GetYaxis()->FindBin(phi_neutron);
+                TH1D *dump_plane_bkg_track_phi_neutron_cut_1D = dump_plane_bkg_track_phi_pos_phi_neutron_cut->ProjectionX("dump_plane_bkg_track_phi_neutron_cut_1D", phiBin, phiBin);
+                phip_neutron = dump_plane_bkg_track_phi_neutron_cut_1D->GetRandom();
+                throw(phiBin);
+            }
+            catch(int phBin){
+                // cout << "neutron problem at phi: " << phi_neutron << " and " << phBin << endl; 
+                ;
+            }
             allHisto1Dict["dump_plane_bkg_track_phi_neutron"]->Fill(phip_neutron);
             
             // p_neutron = math.sqrt(E_neutron**2 - m_neutron**2)
@@ -496,6 +530,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
 
         for(long nphoton=0; nphoton < n_photon; ++nphoton){
             if(nphoton%10000==0) cout << "photon: working on " << nphoton << endl;
+            // if(nphoton>10000)break;
             //////// work with photons
             double p_photon       = dump_plane_bkg_track_energy_photon_cut->GetRandom();
             double m_photon       = 0.0; // GeV
@@ -509,14 +544,22 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
             allHisto1Dict["dump_plane_bkg_track_y_photon_cut"]->Fill(y_photon);
             double r_photon         = sqrt(x_photon*x_photon+y_photon*y_photon);
             double phi_photon       = atan2(y_photon, x_photon);
-            double rWeight          = 999.0;
-            double thetaWeight      = 999.0;
-            double thetap_photon    = 999.0;
+            double rWeight          = -999.0;
+            double thetaWeight      = -999.0;
+            double thetap_photon    = -999.0;
+            double phip_photon      = -999.0;
             ////// project from 2D plots
             if(x_photon > x0){
-                int rBinValue =  dump_plane_bkg_track_rUp_track_theta_photon_cut->GetXaxis()->FindBin(r_photon);
-                TH1D *dump_plane_bkg_rUp_track_theta_photon_cut_1D = dump_plane_bkg_track_rUp_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_photon_cut_1D", rBinValue, rBinValue);
-                thetap_photon = dump_plane_bkg_rUp_track_theta_photon_cut_1D->GetRandom();
+                try{
+                    int rBinValue =  dump_plane_bkg_track_rUp_track_theta_photon_cut->GetXaxis()->FindBin(r_photon);
+                    TH1D *dump_plane_bkg_rUp_track_theta_photon_cut_1D = dump_plane_bkg_track_rUp_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rUp_track_theta_photon_cut_1D", rBinValue, rBinValue);
+                    thetap_photon = dump_plane_bkg_rUp_track_theta_photon_cut_1D->GetRandom();
+                    throw(rBinValue);
+                }
+                catch(int rBin){
+                    // cout << "photon problem at rUp: " << r_photon << " and " << rBin << endl;
+                    ;
+                }
                 /// now modify the theta_p according to the target distribution
                 
                 // if(thetap_photon > 3.0){
@@ -551,12 +594,20 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 allHisto1Dict["dump_plane_bkg_track_xUp_photon"]->Fill(x_photon);
                 allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon"]->Fill(r_photon, thetap_photon);
                 allHisto1Dict["dump_plane_bkg_track_thetaUp_photon"]->Fill(thetap_photon, thetaWeight);
+                allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_morebins"]->Fill(thetap_photon, thetaWeight);
             }
 
             else{
-                int rBinValue =  dump_plane_bkg_track_rDn_track_theta_photon_cut->FindBin(r_photon);
-                TH1D* dump_plane_bkg_rDn_track_theta_photon_cut_1D = dump_plane_bkg_track_rDn_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_photon_cut_1D", rBinValue, rBinValue);
-                thetap_photon = dump_plane_bkg_rDn_track_theta_photon_cut_1D->GetRandom();
+                try{
+                    int rBinValue =  dump_plane_bkg_track_rDn_track_theta_photon_cut->FindBin(r_photon);
+                    TH1D* dump_plane_bkg_rDn_track_theta_photon_cut_1D = dump_plane_bkg_track_rDn_track_theta_photon_cut->ProjectionY("dump_plane_bkg_rDn_track_theta_photon_cut_1D", rBinValue, rBinValue);
+                    thetap_photon = dump_plane_bkg_rDn_track_theta_photon_cut_1D->GetRandom();
+                    throw(rBinValue);
+                }
+                catch(int rBin){
+                    // cout << "photon problem at rDn: " << r_photon << " and " << rBin << endl;
+                    ;
+                }
                 
                 // if(thetap_photon > 3.0){
                 //     float randomThetaCrn = -999.0;
@@ -589,11 +640,19 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
                 allHisto1Dict["dump_plane_bkg_track_xDn_photon"]->Fill(x_photon);
                 allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon"]->Fill(r_photon, thetap_photon);
                 allHisto1Dict["dump_plane_bkg_track_thetaDn_photon"]->Fill(thetap_photon, thetaWeight);
+                allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_morebins"]->Fill(thetap_photon, thetaWeight);
             }
             //dump_plane_bkg_track_phi_pos_phi_photon_cut.GetRandom2(phip_photon, phi_photon) 
-            int phiBin = dump_plane_bkg_track_phi_pos_phi_photon_cut->GetYaxis()->FindBin(phi_photon);
-            TH1D* dump_plane_bkg_track_phi_photon_cut_1D = dump_plane_bkg_track_phi_pos_phi_photon_cut->ProjectionX("dump_plane_bkg_track_phi_photon_cut_1D", phiBin-2, phiBin+2);
-            double phip_photon = dump_plane_bkg_track_phi_photon_cut_1D->GetRandom();
+            try{
+                int phiBin = dump_plane_bkg_track_phi_pos_phi_photon_cut->GetYaxis()->FindBin(phi_photon);
+                TH1D* dump_plane_bkg_track_phi_photon_cut_1D = dump_plane_bkg_track_phi_pos_phi_photon_cut->ProjectionX("dump_plane_bkg_track_phi_photon_cut_1D", phiBin, phiBin);
+                phip_photon = dump_plane_bkg_track_phi_photon_cut_1D->GetRandom();
+                throw(phiBin);
+            }
+            catch(int phBin){
+                // cout << "photon problem at phi: " << phi_photon << " and " << phBin << endl;
+                ;
+            }
             
             allHisto1Dict["dump_plane_bkg_track_phi_photon"]->Fill(phip_photon);
             

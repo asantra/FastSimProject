@@ -80,30 +80,32 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     TH2D* dump_plane_bkg_track_x_track_y_neutron_cut                = (TH2D*)inFile->Get("dump_plane_bkg_track_x_track_y_neutron_cut");
     TH2D* dump_plane_bkg_track_rUp_track_theta_neutron_cut          = (TH2D*)inFile->Get("dump_plane_bkg_track_rUp_track_theta_neutron_cut");
     TH2D* dump_plane_bkg_track_rDn_track_theta_neutron_cut          = (TH2D*)inFile->Get("dump_plane_bkg_track_rDn_track_theta_neutron_cut");
-    dump_plane_bkg_track_x_track_y_neutron_cut->Smooth();
-    dump_plane_bkg_track_rUp_track_theta_neutron_cut->Smooth();
-    dump_plane_bkg_track_rDn_track_theta_neutron_cut->Smooth();
-
     TH1D* dump_plane_bkg_track_energy_neutron_cut                   = (TH1D*)inFile->Get("dump_plane_bkg_track_energy_neutron_cut");
     TH2D* dump_plane_bkg_track_phi_pos_phi_neutron_cut              = (TH2D*)inFile->Get("dump_plane_bkg_track_phi_pos_phi_neutron_cut");
-    dump_plane_bkg_track_phi_pos_phi_neutron_cut->Smooth();
     TH2D*  dump_plane_bkg_time_track_E_neutron_cut                  = (TH2D*)inFile->Get("dump_plane_bkg_time_track_E_neutron_cut");
-    dump_plane_bkg_track_phi_pos_phi_neutron_cut->Smooth();
-    dump_plane_bkg_time_track_E_neutron_cut->Smooth();
-
-
 
     TH2D* dump_plane_bkg_track_x_track_y_photon_cut                 = (TH2D*)inFile->Get("dump_plane_bkg_track_x_track_y_photon_cut");
     TH2D* dump_plane_bkg_track_rUp_track_theta_photon_cut           = (TH2D*)inFile->Get("dump_plane_bkg_track_rUp_track_theta_photon_cut");
     TH2D* dump_plane_bkg_track_rDn_track_theta_photon_cut           = (TH2D*)inFile->Get("dump_plane_bkg_track_rDn_track_theta_photon_cut");
-    dump_plane_bkg_track_x_track_y_photon_cut->Smooth();
-    dump_plane_bkg_track_rUp_track_theta_photon_cut->Smooth();
-    dump_plane_bkg_track_rDn_track_theta_photon_cut->Smooth();
-
     TH1D* dump_plane_bkg_track_energy_photon_cut                    = (TH1D*)inFile->Get("dump_plane_bkg_track_energy_photon_cut");
     TH2D* dump_plane_bkg_track_phi_pos_phi_photon_cut               = (TH2D*)inFile->Get("dump_plane_bkg_track_phi_pos_phi_photon_cut");
-    dump_plane_bkg_track_phi_pos_phi_photon_cut->Smooth();
     TH1D* dump_plane_bkg_track_time_photon_cut                      = (TH1D*)inFile->Get("dump_plane_bkg_track_time_photon_cut");
+
+
+
+    //// first smoothen the 2D histograms before sampling
+    for(int l=0; l < 5; l++){
+        dump_plane_bkg_track_x_track_y_neutron_cut->Smooth();
+        dump_plane_bkg_track_rUp_track_theta_neutron_cut->Smooth();
+        dump_plane_bkg_track_rDn_track_theta_neutron_cut->Smooth();
+        dump_plane_bkg_track_phi_pos_phi_neutron_cut->Smooth();
+        dump_plane_bkg_time_track_E_neutron_cut->Smooth();
+
+        dump_plane_bkg_track_x_track_y_photon_cut->Smooth();
+        dump_plane_bkg_track_rUp_track_theta_photon_cut->Smooth();
+        dump_plane_bkg_track_rDn_track_theta_photon_cut->Smooth();
+        dump_plane_bkg_track_phi_pos_phi_photon_cut->Smooth();
+    }
     
     //#//// variable binned in E;
     double xarray[nbins + 1]  = {0.0};    

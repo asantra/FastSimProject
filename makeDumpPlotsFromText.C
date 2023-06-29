@@ -49,15 +49,13 @@ double getR(double x,double y){
 };
     
 
-void makeDumpPlotsFromText(string weightBkwd="1.0", string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
+void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0", string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
     
     auto start = high_resolution_clock::now();
-    // "/nfs/dust/luxe/user/santraar/TextSamples_October2021/DumpFromFastSim/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt"
     string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
     
     const double x0 = -92.65;
 
-    
     ifstream inFile;
     
     inFile.open(bkgFileName);
@@ -74,7 +72,7 @@ void makeDumpPlotsFromText(string weightBkwd="1.0", string bkgFileName="/Volumes
     if (cmpPlt)
         rootoutname             += std::string("_NoECutNtrn_CoarseBinning_1DComparePlot.root");
     else
-        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwd+"timesBackwardInThetaMore3AndRLess300.root");
+        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwdNt+"timesNeutron_"+weightBkwdPh+"timesPhoton_BackwardInThetaMore3AndRLess300.root");
 
     cout << "The output file: " << rootoutname.c_str() << endl;
 
@@ -95,7 +93,6 @@ void makeDumpPlotsFromText(string weightBkwd="1.0", string bkgFileName="/Volumes
         
     cout << "zPos: " << zPos << endl;
     cout << "BX selected: " << bx << endl;
-    cout << "Backward weight: " << weightBkwd << endl;
     
     
     TFile *outFile       = new TFile(rootoutname.c_str(), "RECREATE");
@@ -277,11 +274,29 @@ void makeDumpPlotsFromText(string weightBkwd="1.0", string bkgFileName="/Volumes
         if(cmpPlt)
             bkwdThetaWt = 1.0;
         else{
-            if(theta > 3.0 && rValue < 300)
-                bkwdThetaWt = stof(weightBkwd);
+            if(theta > 3.0 && rValue < 300){
+                if (pdgId == 2112)
+                    bkwdThetaWt = stof(weightBkwdNt);
+                else if (pdgId == 22)
+                    bkwdThetaWt = stof(weightBkwdPh);
+                else
+                    // cout << "This particle is unexpected: " << pdgId << endl;
+                    ;
+            }
             else
                 bkwdThetaWt = 1.0;
-        } 
+        }
+
+        // if(theta > 3.0 && rValue < 300){
+        //     if (pdgId==2112)
+        //         cout << "For neutron weight " << bkwdThetaWt << endl;
+        //     else if (pdgId == 22)
+        //         cout << "For photon weight " << bkwdThetaWt << endl;
+        //     else
+        //         cout << "This particle is unexpected: " << pdgId << endl;
+        // }
+
+        
         
         
         ////// if(time > 1000): continue;

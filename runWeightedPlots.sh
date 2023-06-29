@@ -8,7 +8,8 @@
 # makeLUXEFastSimFullSimDumpPlotsFromText("/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId31.txt", 1.0, 31, true)
 # EOF
 
-for weight in 1.0 1.1 1.5 2.0 2.5; do
+# for weight in 1.0 1.1 1.5 2.0 2.5; do
+for weight in 3.0; do
     #weight=${1:-"1.0"}
 echo "working on weight: "${weight}
 root -l << EOF

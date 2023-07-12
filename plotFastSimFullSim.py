@@ -47,7 +47,8 @@ def DrawHistsRatio(FirstTH1, LegendName, PlotColor, xrange1down, xrange1up, yran
      FirstTH1[i].GetXaxis().SetLabelSize(0.15)
      if "track_r" in FirstTH1[i].GetName():
         FirstTH1[i].Scale(1.0, "width")
-    #  w = FirstTH1[i].Integral()
+     w = FirstTH1[i].Integral()
+     FirstTH1[i].Scale(1./w)
     #  print("integral inside: ", w)
      FirstTH1[i] = SetHistColorEtc(FirstTH1[i], PlotColor[i])
      legend1.AddEntry(FirstTH1[i],LegendName[i], "lp")
@@ -135,9 +136,13 @@ def main():
 
     parser = argparse.ArgumentParser(description='Code to get 2D plots')
     parser.add_argument('-det', action="store", dest="detid", type=str, default="33")
+    parser.add_argument('-timesNt', action="store", dest="weightValueNt", type=str, default="1.0")
+    parser.add_argument('-timesPh', action="store", dest="weightValuePh", type=str, default="1.0")
+    parser.add_argument('-version', action="store", dest="versionVal", type=str, default="1")
     args = parser.parse_args()
 
-    outDir = "RandomFastSimvsFullSimLUXE2023_DiffRWeight_DetId"+args.detid
+    # outDir = "RandomFastSimvsFullSimLUXE2023_DiffRWeight_DetId"+args.detid
+    outDir = "FastSimvsFullSimLUXE2023_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -173,8 +178,13 @@ def main():
         #fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId33_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
         # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat.root","READ")
         # fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId"+args.detid+"_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
+        # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_DetId"+args.detid+"_CompareWith_1.3timesNeutron_2.5timesPhoton_BackwardInThetaMore3AndRLess300.root","READ")
         fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_DetId"+args.detid+".root","READ")
-        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted_NoECutNtrn_DetId"+args.detid+".root", "READ")
+        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted_NoECutNtrn_DetId"+args.detid+".root", "READ")
+        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid+".root", "READ")
+
+
+        
     except:
        print("There is something wrong with at least one of the files.")
 

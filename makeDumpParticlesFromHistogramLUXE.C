@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 
 /// energy and time bins
-const int nbins=450;
+const int nbins=650;
 /// r bins
 // const int nRBins = 6300;
 // coarse binning
@@ -94,12 +94,14 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
 
 
     //// first smoothen the 2D histograms before sampling
-    for(int l=0; l < 5; l++){
-        dump_plane_bkg_track_x_track_y_neutron_cut->Smooth();
-        dump_plane_bkg_track_rUp_track_theta_neutron_cut->Smooth();
-        dump_plane_bkg_track_rDn_track_theta_neutron_cut->Smooth();
-        dump_plane_bkg_track_phi_pos_phi_neutron_cut->Smooth();
-        dump_plane_bkg_time_track_E_neutron_cut->Smooth();
+    cout << "Smothening the 2D histograms " << endl;
+    // dump_plane_bkg_track_x_track_y_neutron_cut->Smooth();
+    // dump_plane_bkg_track_rUp_track_theta_neutron_cut->Smooth();
+    // dump_plane_bkg_track_rDn_track_theta_neutron_cut->Smooth();
+    // dump_plane_bkg_track_phi_pos_phi_neutron_cut->Smooth();
+    // dump_plane_bkg_time_track_E_neutron_cut->Smooth();
+
+    for(int l=0; l < 2; l++){
 
         dump_plane_bkg_track_x_track_y_photon_cut->Smooth();
         dump_plane_bkg_track_rUp_track_theta_photon_cut->Smooth();
@@ -109,7 +111,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     
     //#//// variable binned in E;
     double xarray[nbins + 1]  = {0.0};    
-    int logmin                = -7;
+    int logmin                = -12;
     int logmax                = 0;
     double logbinwidth        = (logmax-logmin)/float(nbins);
   
@@ -121,7 +123,7 @@ void makeDumpParticlesFromHistogramLUXE(string bkgFileName="/Volumes/OS/LUXEBkgO
     //#//// variable binned in t;
     double tarray[nbins + 1]  = {0.0};    
     logmin                = 1;
-    logmax                = 8;
+    logmax                = 12;
     logbinwidth        = (logmax-logmin)/float(nbins);
   
     for(int i=0; i < nbins+1; ++i){

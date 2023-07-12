@@ -138,10 +138,11 @@ def main():
     parser.add_argument('-times', action="store", dest="weightValue", type=str, default="1.0")
     parser.add_argument('-timesNt', action="store", dest="weightValueNt", type=str, default="1.0")
     parser.add_argument('-timesPh', action="store", dest="weightValuePh", type=str, default="1.0")
+    parser.add_argument('-version', action="store", dest="versionVal", type=str, default="1")
     args = parser.parse_args()
 
     # outDir = "RandomFastSamplingvsFullSimLUXE_CoarseBinning_"+args.weightValue+"timesBackwardInThetaMore3AndRLess300" ### when neutron and photon have same weights
-    outDir = "RandomFastSamplingvsFullSimLUXE_CoarseBinning_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_BackwardInThetaMore3AndRLess300" ### when neutron and photon have different weights
+    outDir = "RandomFastSamplingvsFullSimLUXE_CoarseBinning_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal ### when neutron and photon have different weights
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -178,7 +179,8 @@ def main():
         fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_1DComparePlot.root", "READ")
         
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_"+args.weightValue+"timesBackwardInThetaMore3AndRLess300_RandomGeneration_v1.root", "READ") ### when neutron and photon have same weights
-        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_BackwardInThetaMore3AndRLess300_RandomGeneration_v1.root", "READ") ### when neutron and photon have different weights
+        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_BackwardInThetaMore3AndRLess300_RandomGeneration_v1.root", "READ") ### when neutron and photon have different weights
+        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_CoarseBinning_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_RandomGeneration_v1.root", "READ") ### when neutron and photon have different weights
     except:
         print("Something wrong in the files")
         exit()

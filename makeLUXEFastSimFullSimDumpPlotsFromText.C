@@ -22,7 +22,7 @@ using namespace std::chrono;
 
 
 /// energy and time bins
-const int nbins=450;
+const int nbins=650;
 /// r bins
 const int nRBins = 6300;
 /// x/y bins
@@ -44,7 +44,7 @@ double getR(double x,double y){
 };
 
 
-void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted.txt", float bx=1.0, int det=32, bool isFullSim=false){
+void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted.txt", float bx=1.0, int det=33, bool isFullSim=false){
     
     auto start = high_resolution_clock::now();
     int nNt = 0;
@@ -65,19 +65,25 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
         }
         else if (det==32){
             /// fullsim entries
-            //    nNtLim = 44919187;
-            //    nPhLim = 12559752;
-            /// fastsim entries
-            nNtLim = 9035488;
-            nPhLim = 1265180;
+               nNtLim = 44919187;
+               nPhLim = 12559752;
+            /// fastsim entries, unweighted
+            // nNtLim = 9035488;
+            // nPhLim = 1265180;
+            /// fastsim entries, weighted
+            // nNtLim = 483526;
+            // nPhLim = 126613;
         }
         else if (det==31){
             /// fullsim entries
-            //    nNtLim = 34844633;
-            //    nPhLim = 11513244;
-            /// fastsim entries
-            nNtLim = 7020570;
-            nPhLim = 1160168;
+               nNtLim = 34844633;
+               nPhLim = 11513244;
+            // /// fastsim entries, unweighted
+            // nNtLim = 7020570;
+            // nPhLim = 1160168;
+            /// fastsim entries, unweighted
+            // nNtLim = 388300;
+            // nPhLim = 116090;
         }
         else
             ;
@@ -98,7 +104,10 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     std::string foutname    = bkgFileName.substr(bkgFileName.find_last_of("/")+1);
     foutname                = foutname.substr(0, foutname.find_last_of("."));
     std::string rootoutname = inDir+foutname;
-    rootoutname             += std::string("_NoECutNtrn_DetId"+to_string(det)+"_CompareWithMoreStatBackward.root");
+    if(isFullSim)
+        rootoutname             += std::string("_NoECutNtrn_DetId"+to_string(det)+".root");
+    else 
+        rootoutname             += std::string("_DetId"+to_string(det)+".root");
     
     cout << "The output file: " << rootoutname << endl;
 
@@ -123,7 +132,7 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     
     //#//// variable binned in E;
     double xarray[nbins + 1]  = {0.0};    
-    int logmin                = -7;
+    int logmin                = -12;
     int logmax                = 0;
     double logbinwidth        = (logmax-logmin)/float(nbins);
   
@@ -135,7 +144,7 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     //#//// variable binned in t;
     double tarray[nbins + 1]  = {0.0};    
     logmin                = 1;
-    logmax                = 8;
+    logmax                = 12;
     logbinwidth        = (logmax-logmin)/float(nbins);
   
     for(int i=0; i < nbins+1; ++i){

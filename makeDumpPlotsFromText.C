@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 
 /// energy and time bins
-const int nbins=450;
+const int nbins=650;
 /// r bins
 // const int nRBins = 6300;
 // coarse binning
@@ -49,7 +49,7 @@ double getR(double x,double y){
 };
     
 
-void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0", string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
+void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0", string version="1", string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FullSim_0p06BX_DetId33.txt", float bx=1.0, int det=33, bool cmpPlt=false){
     
     auto start = high_resolution_clock::now();
     string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
@@ -72,14 +72,14 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     if (cmpPlt)
         rootoutname             += std::string("_NoECutNtrn_CoarseBinning_1DComparePlot.root");
     else
-        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwdNt+"timesNeutron_"+weightBkwdPh+"timesPhoton_BackwardInThetaMore3AndRLess300.root");
+        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwdNt+"timesNeutron_"+weightBkwdPh+"timesPhoton_v"+version+".root");
 
     cout << "The output file: " << rootoutname.c_str() << endl;
 
-    long nntrnLim = 549773;
-    long nphoLim = 135310;
-    
+    long nntrnLim   = 549773;
+    long nphoLim    = 135310;
     double zPos = 0.0;
+
     if (det==33)
         zPos = 6621.91;
     else if (det==32)
@@ -100,7 +100,7 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     
     //#//// variable binned in E;
     double xarray[nbins + 1]  = {0.0};    
-    int logmin                = -7;
+    int logmin                = -12;
     int logmax                = 0;
     double logbinwidth        = (logmax-logmin)/float(nbins);
   
@@ -112,7 +112,7 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     //#//// variable binned in t;
     double tarray[nbins + 1]  = {0.0};    
     logmin                = 1;
-    logmax                = 8;
+    logmax                = 12;
     logbinwidth        = (logmax-logmin)/float(nbins);
   
     for(int i=0; i < nbins+1; ++i){
@@ -194,6 +194,9 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_cut",  new TH2D("dump_plane_bkg_time_track_theta_photon_cut","dump_plane_bkg_time_track_theta_photon_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_weighted_cut",  new TH2D("dump_plane_bkg_time_track_r_photon_weighted_cut","dump_plane_bkg_time_track_r_photon_weighted_cut; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_weighted_cut",  new TH2D("dump_plane_bkg_time_track_theta_photon_weighted_cut","dump_plane_bkg_time_track_theta_photon_weighted_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("weight_neutron",  new TH2D("weight_neutron","weight_neutron; r [mm]; #theta_{p} [rad]", 400, 0, 400, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("weight_photon",  new TH2D("weight_photon","weight_photon; r [mm]; #theta_{p} [rad]", 400, 0, 400, 800, 1.6, 3.2)));
+    
     
     ////// 1D plot;
     
@@ -241,8 +244,8 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     
     int nntrn(0), npho(0);
     int niteration(1); /// the number of times we want to fill the high theta bins
+
     while(inFile >> bxNumber >> pdgId >> trackId >> detId >> xPos >> yPos >> energyVal >> weight >> vtx_x >> vtx_y >> vtx_z >> parent_id >> pxx >> pyy >> pzz >> physprocess >> time){
-        
         
         lineCounter += 1;
         if(lineCounter%100000==0)
@@ -270,22 +273,53 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
         double rWeight         = 1./(2*TMath::Pi()*rValue);
         double thetaWeight     = 1./(2*TMath::Pi()*TMath::Sin(theta));
         
-        /// weight the backward theta entries by 10%
+        /// weight the backward theta entries
+        /// these weights come as a step function
+        // if(cmpPlt)
+        //     bkwdThetaWt = 1.0;
+        // else{
+        //     if(theta > 3.0 && rValue < 300){
+        //         if (pdgId == 2112)
+        //             bkwdThetaWt = stof(weightBkwdNt);
+        //         else if (pdgId == 22)
+        //             bkwdThetaWt = stof(weightBkwdPh);
+        //         else
+        //             // cout << "This particle is unexpected: " << pdgId << endl;
+        //             ;
+        //     }
+        //     else
+        //         bkwdThetaWt = 1.0;
+        // }
+        
+        /// these weights come as an error function
         if(cmpPlt)
             bkwdThetaWt = 1.0;
         else{
-            if(theta > 3.0 && rValue < 300){
-                if (pdgId == 2112)
+            float normWeight=1.0;
+            if(pdgId==2212){
+                normWeight = (stof(weightBkwdNt)-1.0);
+                /// don't use a function
+                if(theta>3.1)
                     bkwdThetaWt = stof(weightBkwdNt);
-                else if (pdgId == 22)
-                    bkwdThetaWt = stof(weightBkwdPh);
                 else
-                    // cout << "This particle is unexpected: " << pdgId << endl;
-                    ;
+                    bkwdThetaWt = 1.0;
+                // use a function
+                // bkwdThetaWt = 1.0 + normWeight/(1+exp(-(theta-3.12)/0.001)); // steeper rise in theta
+                // bkwdThetaWt = 1.0;
+            } 
+            else if(pdgId==22){
+                normWeight = (stof(weightBkwdPh)-1.0);
+                bkwdThetaWt = 1.0 + normWeight/(1+exp(-(theta-3.05)/0.01)); // steeper rise in theta
+                // bkwdThetaWt = 1.0;
             }
             else
-                bkwdThetaWt = 1.0;
+                ;
+            // bkwdThetaWt = 1.0 + normWeight/((1+exp(-(theta-3.0)/0.3))*(1+exp(-(300.0-rValue)/0.3))); // less steep rise in theta
+            
         }
+
+        if(pdgId==2112) allHisto2Dict["weight_neutron"]->Fill(rValue, theta, bkwdThetaWt);
+        if(pdgId==22)   allHisto2Dict["weight_photon"]->Fill(rValue, theta, bkwdThetaWt);
 
         // if(theta > 3.0 && rValue < 300){
         //     if (pdgId==2112)
@@ -341,6 +375,7 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
                 allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
                 allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_cut"]->Fill(rValue, energyVal, weight);
                 allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_weighted_cut"]->Fill(rValue, energyVal, rWeight*weight);
+                allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_neutron_cut"]->Fill(phi, phiPos, weight);
                 allHisto2Dict["dump_plane_bkg_time_track_E_neutron_cut"]->Fill(time,energyVal, weight);
                 allHisto2Dict["dump_plane_bkg_time_track_r_neutron_cut"]->Fill(time,rValue, weight);
                 allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_cut"]->Fill(time,theta, weight);

@@ -72,7 +72,7 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     if (cmpPlt)
         rootoutname             += std::string("_NoECutNtrn_CoarseBinning_1DComparePlot.root");
     else
-        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwdNt+"timesNeutron_"+weightBkwdPh+"timesPhoton_v"+version+".root");
+        rootoutname             += std::string("_NoECutNtrn_CoarseBinning_"+weightBkwdNt+"timesNeutron_"+weightBkwdPh+"timesPhoton_v"+version+"_two_r_regions.root");
 
     cout << "The output file: " << rootoutname.c_str() << endl;
 
@@ -163,73 +163,143 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
     map<string, TH2D*> allHisto2Dict;
     
     //////// histograms after applying some cuts;
-    
+    ////// low r plots
     ////// 2D plot;
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_neutron_cut",  new TH2D("dump_plane_bkg_track_x_track_y_neutron_cut","dump_plane_bkg_track_x_track_y_neutron_cut; track x [mm]; track y [mm]",nXBins, xyarray, nXBins, xyarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut",  new TH2D("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut","dump_plane_bkg_track_r_track_theta_neutron_weighted_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron_cut",  new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron_cut","dump_plane_bkg_track_rUp_track_theta_neutron_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron_cut",  new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron_cut","dump_plane_bkg_track_rDn_track_theta_neutron_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut","dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut","dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_weighted_cut",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_weighted_cut","dump_plane_bkg_track_r_track_E_neutron_weighted_cut; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_neutron_cut",  new TH2D("dump_plane_bkg_track_phi_pos_phi_neutron_cut","dump_plane_bkg_track_phi_pos_phi_neutron_cut; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_cut",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_cut","dump_plane_bkg_track_r_track_E_neutron_cut; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_neutron_cut",  new TH2D("dump_plane_bkg_time_track_E_neutron_cut","dump_plane_bkg_time_track_E_neutron_cut; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_cut",  new TH2D("dump_plane_bkg_time_track_r_neutron_cut","dump_plane_bkg_time_track_r_neutron_cut; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_cut",  new TH2D("dump_plane_bkg_time_track_theta_neutron_cut","dump_plane_bkg_time_track_theta_neutron_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_weighted_cut",  new TH2D("dump_plane_bkg_time_track_r_neutron_weighted_cut","dump_plane_bkg_time_track_r_neutron_weighted_cut; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_weighted_cut",  new TH2D("dump_plane_bkg_time_track_theta_neutron_weighted_cut","dump_plane_bkg_time_track_theta_neutron_weighted_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_x_track_y_neutron_cut_lowr","dump_plane_bkg_track_x_track_y_neutron_cut_lowr; track x [mm]; track y [mm]",1000, 0, 1000, 1000, 0, 1000)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_lowr","dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron_cut_lowr","dump_plane_bkg_track_rUp_track_theta_neutron_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron_cut_lowr","dump_plane_bkg_track_rDn_track_theta_neutron_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_lowr","dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_lowr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_lowr","dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_lowr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_weighted_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_weighted_cut_lowr","dump_plane_bkg_track_r_track_E_neutron_weighted_cut_lowr; r [mm]; E [GeV]", 1000, 0, 1000, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_phi_pos_phi_neutron_cut_lowr","dump_plane_bkg_track_phi_pos_phi_neutron_cut_lowr; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_cut_lowr","dump_plane_bkg_track_r_track_E_neutron_cut_lowr; r [mm]; E [GeV]", 1000, 0, 1000, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_neutron_cut_lowr",  new TH2D("dump_plane_bkg_time_track_E_neutron_cut_lowr","dump_plane_bkg_time_track_E_neutron_cut_lowr; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_cut_lowr",  new TH2D("dump_plane_bkg_time_track_r_neutron_cut_lowr","dump_plane_bkg_time_track_r_neutron_cut_lowr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_cut_lowr",  new TH2D("dump_plane_bkg_time_track_theta_neutron_cut_lowr","dump_plane_bkg_time_track_theta_neutron_cut_lowr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_weighted_cut_lowr",  new TH2D("dump_plane_bkg_time_track_r_neutron_weighted_cut_lowr","dump_plane_bkg_time_track_r_neutron_weighted_cut_lowr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_weighted_cut_lowr",  new TH2D("dump_plane_bkg_time_track_theta_neutron_weighted_cut_lowr","dump_plane_bkg_time_track_theta_neutron_weighted_cut_lowr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
     
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_photon_cut",  new TH2D("dump_plane_bkg_track_x_track_y_photon_cut","dump_plane_bkg_track_x_track_y_photon_cut; track x [mm]; track y [mm]",nXBins, xyarray, nXBins, xyarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_photon_weighted_cut",  new TH2D("dump_plane_bkg_track_r_track_theta_photon_weighted_cut","dump_plane_bkg_track_r_track_theta_photon_weighted_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon_cut",  new TH2D("dump_plane_bkg_track_rUp_track_theta_photon_cut","dump_plane_bkg_track_rUp_track_theta_photon_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon_cut",  new TH2D("dump_plane_bkg_track_rDn_track_theta_photon_cut","dump_plane_bkg_track_rDn_track_theta_photon_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut","dump_plane_bkg_track_rUp_track_theta_backward_photon_cut; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut","dump_plane_bkg_track_rDn_track_theta_backward_photon_cut; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_weighted_cut",  new TH2D("dump_plane_bkg_track_r_track_E_photon_weighted_cut","dump_plane_bkg_track_r_track_E_photon_weighted_cut; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_photon_cut",  new TH2D("dump_plane_bkg_track_phi_pos_phi_photon_cut","dump_plane_bkg_track_phi_pos_phi_photon_cut; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_cut",  new TH2D("dump_plane_bkg_track_r_track_E_photon_cut","dump_plane_bkg_track_r_track_E_photon_cut; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_photon_cut",  new TH2D("dump_plane_bkg_time_track_E_photon_cut","dump_plane_bkg_time_track_E_photon_cut; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_cut",  new TH2D("dump_plane_bkg_time_track_r_photon_cut","dump_plane_bkg_time_track_r_photon_cut; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_cut",  new TH2D("dump_plane_bkg_time_track_theta_photon_cut","dump_plane_bkg_time_track_theta_photon_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_weighted_cut",  new TH2D("dump_plane_bkg_time_track_r_photon_weighted_cut","dump_plane_bkg_time_track_r_photon_weighted_cut; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
-    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_weighted_cut",  new TH2D("dump_plane_bkg_time_track_theta_photon_weighted_cut","dump_plane_bkg_time_track_theta_photon_weighted_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_x_track_y_photon_cut_lowr","dump_plane_bkg_track_x_track_y_photon_cut_lowr; track x [mm]; track y [mm]",1000, 0, 1000, 1000, 0, 1000)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_photon_weighted_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_theta_photon_weighted_cut_lowr","dump_plane_bkg_track_r_track_theta_photon_weighted_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_photon_cut_lowr","dump_plane_bkg_track_rUp_track_theta_photon_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_photon_cut_lowr","dump_plane_bkg_track_rDn_track_theta_photon_cut_lowr; r [mm]; #theta_{p} [rad]", 1000, 0, 1000, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_lowr","dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_lowr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_lowr","dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_lowr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_weighted_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_E_photon_weighted_cut_lowr","dump_plane_bkg_track_r_track_E_photon_weighted_cut_lowr; r [mm]; E [GeV]", 1000, 0, 1000, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_phi_pos_phi_photon_cut_lowr","dump_plane_bkg_track_phi_pos_phi_photon_cut_lowr; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_cut_lowr",  new TH2D("dump_plane_bkg_track_r_track_E_photon_cut_lowr","dump_plane_bkg_track_r_track_E_photon_cut_lowr; r [mm]; E [GeV]", 1000, 0, 1000, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_photon_cut_lowr",  new TH2D("dump_plane_bkg_time_track_E_photon_cut_lowr","dump_plane_bkg_time_track_E_photon_cut_lowr; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_cut_lowr",  new TH2D("dump_plane_bkg_time_track_r_photon_cut_lowr","dump_plane_bkg_time_track_r_photon_cut_lowr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_cut_lowr",  new TH2D("dump_plane_bkg_time_track_theta_photon_cut_lowr","dump_plane_bkg_time_track_theta_photon_cut_lowr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_weighted_cut_lowr",  new TH2D("dump_plane_bkg_time_track_r_photon_weighted_cut_lowr","dump_plane_bkg_time_track_r_photon_weighted_cut_lowr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_weighted_cut_lowr",  new TH2D("dump_plane_bkg_time_track_theta_photon_weighted_cut_lowr","dump_plane_bkg_time_track_theta_photon_weighted_cut_lowr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    
+    
+    ////// 1D plot;
+    
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_x_neutron_cut_lowr","dump_plane_bkg_track_x_neutron_cut_lowr; track x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_y_neutron_cut_lowr","dump_plane_bkg_track_y_neutron_cut_lowr; track y [mm]; Events",1000, 0, 1000)));
+    
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_time_neutron_cut_lowr","dump_plane_bkg_track_time_neutron_cut_lowr; t [ns]; Events",nbins, tarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_energy_neutron_cut_lowr","dump_plane_bkg_track_energy_neutron_cut_lowr; E [GeV]; Events",nbins, xarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_rUp_neutron_cut_lowr","dump_plane_bkg_track_rUp_neutron_cut_lowr; r [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_rDn_neutron_cut_lowr","dump_plane_bkg_track_rDn_neutron_cut_lowr; r [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_xUp_neutron_cut_lowr","dump_plane_bkg_track_xUp_neutron_cut_lowr; x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_xDn_neutron_cut_lowr","dump_plane_bkg_track_xDn_neutron_cut_lowr; x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_theta_neutron_cut_lowr","dump_plane_bkg_track_theta_neutron_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr_morebins","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr_morebins","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron_cut_lowr",  new TH1D("dump_plane_bkg_track_phi_neutron_cut_lowr","dump_plane_bkg_track_phi_neutron_cut_lowr; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
+
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_x_photon_cut_lowr","dump_plane_bkg_track_x_photon_cut_lowr; track x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_y_photon_cut_lowr","dump_plane_bkg_track_y_photon_cut_lowr; track y [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_time_photon_cut_lowr","dump_plane_bkg_track_time_photon_cut_lowr; t [ns]; Events",nbins, tarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_energy_photon_cut_lowr","dump_plane_bkg_track_energy_photon_cut_lowr; E [GeV]; Events",nbins, xarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_rUp_photon_cut_lowr","dump_plane_bkg_track_rUp_photon_cut_lowr; r [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_rDn_photon_cut_lowr","dump_plane_bkg_track_rDn_photon_cut_lowr; r [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_xUp_photon_cut_lowr","dump_plane_bkg_track_xUp_photon_cut_lowr; x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_xDn_photon_cut_lowr","dump_plane_bkg_track_xDn_photon_cut_lowr; x [mm]; Events",1000, 0, 1000)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr","dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr_morebins","dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr","dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr_morebins","dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_theta_photon_cut_lowr","dump_plane_bkg_track_theta_photon_cut_lowr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon_cut_lowr",  new TH1D("dump_plane_bkg_track_phi_photon_cut_lowr","dump_plane_bkg_track_phi_photon_cut_lowr; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
+    
+
+
+
+
+    ///// high r plots
+    ////// 2D plot;
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_x_track_y_neutron_cut_highr","dump_plane_bkg_track_x_track_y_neutron_cut_highr; track x [mm]; track y [mm]",nXBins, xyarray, nXBins, xyarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_highr","dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_neutron_cut_highr","dump_plane_bkg_track_rUp_track_theta_neutron_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_neutron_cut_highr","dump_plane_bkg_track_rDn_track_theta_neutron_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_highr","dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_highr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_highr","dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_highr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_weighted_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_weighted_cut_highr","dump_plane_bkg_track_r_track_E_neutron_weighted_cut_highr; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_phi_pos_phi_neutron_cut_highr","dump_plane_bkg_track_phi_pos_phi_neutron_cut_highr; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_E_neutron_cut_highr","dump_plane_bkg_track_r_track_E_neutron_cut_highr; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_neutron_cut_highr",  new TH2D("dump_plane_bkg_time_track_E_neutron_cut_highr","dump_plane_bkg_time_track_E_neutron_cut_highr; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_cut_highr",  new TH2D("dump_plane_bkg_time_track_r_neutron_cut_highr","dump_plane_bkg_time_track_r_neutron_cut_highr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_cut_highr",  new TH2D("dump_plane_bkg_time_track_theta_neutron_cut_highr","dump_plane_bkg_time_track_theta_neutron_cut_highr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_neutron_weighted_cut_highr",  new TH2D("dump_plane_bkg_time_track_r_neutron_weighted_cut_highr","dump_plane_bkg_time_track_r_neutron_weighted_cut_highr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_neutron_weighted_cut_highr",  new TH2D("dump_plane_bkg_time_track_theta_neutron_weighted_cut_highr","dump_plane_bkg_time_track_theta_neutron_weighted_cut_highr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_x_track_y_photon_cut_highr",  new TH2D("dump_plane_bkg_track_x_track_y_photon_cut_highr","dump_plane_bkg_track_x_track_y_photon_cut_highr; track x [mm]; track y [mm]",nXBins, xyarray, nXBins, xyarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_photon_weighted_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_theta_photon_weighted_cut_highr","dump_plane_bkg_track_r_track_theta_photon_weighted_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_photon_cut_highr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_photon_cut_highr","dump_plane_bkg_track_rUp_track_theta_photon_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_photon_cut_highr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_photon_cut_highr","dump_plane_bkg_track_rDn_track_theta_photon_cut_highr; r [mm]; #theta_{p} [rad]", nRBins, rarray, 800, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_highr",  new TH2D("dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_highr","dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_highr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_highr",  new TH2D("dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_highr","dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_highr; r [mm]; #theta_{p} [rad]", 250, 0, 1000, 200, 2.8, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_weighted_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_E_photon_weighted_cut_highr","dump_plane_bkg_track_r_track_E_photon_weighted_cut_highr; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_phi_pos_phi_photon_cut_highr",  new TH2D("dump_plane_bkg_track_phi_pos_phi_photon_cut_highr","dump_plane_bkg_track_phi_pos_phi_photon_cut_highr; #phi_{p} [rad]; #phi_{pos} [rad]", 6400, -3.2, 3.2, 6400, -3.2, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_photon_cut_highr",  new TH2D("dump_plane_bkg_track_r_track_E_photon_cut_highr","dump_plane_bkg_track_r_track_E_photon_cut_highr; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_E_photon_cut_highr",  new TH2D("dump_plane_bkg_time_track_E_photon_cut_highr","dump_plane_bkg_time_track_E_photon_cut_highr; time [ns]; E [GeV]", nbins, tarray, nbins, xarray)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_cut_highr",  new TH2D("dump_plane_bkg_time_track_r_photon_cut_highr","dump_plane_bkg_time_track_r_photon_cut_highr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_cut_highr",  new TH2D("dump_plane_bkg_time_track_theta_photon_cut_highr","dump_plane_bkg_time_track_theta_photon_cut_highr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_r_photon_weighted_cut_highr",  new TH2D("dump_plane_bkg_time_track_r_photon_weighted_cut_highr","dump_plane_bkg_time_track_r_photon_weighted_cut_highr; time [ns]; r [mm]", nbins, tarray, 1000, 0.0, 2000.0)));
+    allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_weighted_cut_highr",  new TH2D("dump_plane_bkg_time_track_theta_photon_weighted_cut_highr","dump_plane_bkg_time_track_theta_photon_weighted_cut_highr; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
     allHisto2Dict.insert(make_pair("weight_neutron",  new TH2D("weight_neutron","weight_neutron; r [mm]; #theta_{p} [rad]", 400, 0, 400, 800, 1.6, 3.2)));
     allHisto2Dict.insert(make_pair("weight_photon",  new TH2D("weight_photon","weight_photon; r [mm]; #theta_{p} [rad]", 400, 0, 400, 800, 1.6, 3.2)));
     
     
     ////// 1D plot;
     
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_neutron_cut",  new TH1D("dump_plane_bkg_track_x_neutron_cut","dump_plane_bkg_track_x_neutron_cut; track x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_neutron_cut",  new TH1D("dump_plane_bkg_track_y_neutron_cut","dump_plane_bkg_track_y_neutron_cut; track y [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_x_neutron_cut_highr","dump_plane_bkg_track_x_neutron_cut_highr; track x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_y_neutron_cut_highr","dump_plane_bkg_track_y_neutron_cut_highr; track y [mm]; Events",nXBins, xyarray)));
     
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_neutron_cut",  new TH1D("dump_plane_bkg_track_time_neutron_cut","dump_plane_bkg_track_time_neutron_cut; t [ns]; Events",nbins, tarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_neutron_cut",  new TH1D("dump_plane_bkg_track_energy_neutron_cut","dump_plane_bkg_track_energy_neutron_cut; E [GeV]; Events",nbins, xarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron_cut",  new TH1D("dump_plane_bkg_track_rUp_neutron_cut","dump_plane_bkg_track_rUp_neutron_cut; r [mm]; Events",nRBins, rarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_neutron_cut",  new TH1D("dump_plane_bkg_track_rDn_neutron_cut","dump_plane_bkg_track_rDn_neutron_cut; r [mm]; Events",nRBins, rarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_neutron_cut",  new TH1D("dump_plane_bkg_track_xUp_neutron_cut","dump_plane_bkg_track_xUp_neutron_cut; x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron_cut",  new TH1D("dump_plane_bkg_track_xDn_neutron_cut","dump_plane_bkg_track_xDn_neutron_cut; x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_cut",  new TH1D("dump_plane_bkg_track_theta_neutron_cut","dump_plane_bkg_track_theta_neutron_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut","dump_plane_bkg_track_thetaUp_neutron_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut","dump_plane_bkg_track_thetaDn_neutron_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron_cut",  new TH1D("dump_plane_bkg_track_phi_neutron_cut","dump_plane_bkg_track_phi_neutron_cut; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_time_neutron_cut_highr","dump_plane_bkg_track_time_neutron_cut_highr; t [ns]; Events",nbins, tarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_energy_neutron_cut_highr","dump_plane_bkg_track_energy_neutron_cut_highr; E [GeV]; Events",nbins, xarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_rUp_neutron_cut_highr","dump_plane_bkg_track_rUp_neutron_cut_highr; r [mm]; Events",nRBins, rarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_rDn_neutron_cut_highr","dump_plane_bkg_track_rDn_neutron_cut_highr; r [mm]; Events",nRBins, rarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_xUp_neutron_cut_highr","dump_plane_bkg_track_xUp_neutron_cut_highr; x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_xDn_neutron_cut_highr","dump_plane_bkg_track_xDn_neutron_cut_highr; x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_theta_neutron_cut_highr","dump_plane_bkg_track_theta_neutron_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr_morebins","dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr_morebins","dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_neutron_cut_highr",  new TH1D("dump_plane_bkg_track_phi_neutron_cut_highr","dump_plane_bkg_track_phi_neutron_cut_highr; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
 
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_photon_cut",  new TH1D("dump_plane_bkg_track_x_photon_cut","dump_plane_bkg_track_x_photon_cut; track x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_photon_cut",  new TH1D("dump_plane_bkg_track_y_photon_cut","dump_plane_bkg_track_y_photon_cut; track y [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_photon_cut",  new TH1D("dump_plane_bkg_track_time_photon_cut","dump_plane_bkg_track_time_photon_cut; t [ns]; Events",nbins, tarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_photon_cut",  new TH1D("dump_plane_bkg_track_energy_photon_cut","dump_plane_bkg_track_energy_photon_cut; E [GeV]; Events",nbins, xarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_photon_cut",  new TH1D("dump_plane_bkg_track_rUp_photon_cut","dump_plane_bkg_track_rUp_photon_cut; r [mm]; Events",nRBins, rarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_photon_cut",  new TH1D("dump_plane_bkg_track_rDn_photon_cut","dump_plane_bkg_track_rDn_photon_cut; r [mm]; Events",nRBins, rarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_photon_cut",  new TH1D("dump_plane_bkg_track_xUp_photon_cut","dump_plane_bkg_track_xUp_photon_cut; x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon_cut",  new TH1D("dump_plane_bkg_track_xDn_photon_cut","dump_plane_bkg_track_xDn_photon_cut; x [mm]; Events",nXBins, xyarray)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut","dump_plane_bkg_track_thetaUp_photon_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins","dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut","dump_plane_bkg_track_thetaDn_photon_weighted_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins","dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_cut",  new TH1D("dump_plane_bkg_track_theta_photon_cut","dump_plane_bkg_track_theta_photon_cut; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
-    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon_cut",  new TH1D("dump_plane_bkg_track_phi_photon_cut","dump_plane_bkg_track_phi_photon_cut; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_x_photon_cut_highr",  new TH1D("dump_plane_bkg_track_x_photon_cut_highr","dump_plane_bkg_track_x_photon_cut_highr; track x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_y_photon_cut_highr",  new TH1D("dump_plane_bkg_track_y_photon_cut_highr","dump_plane_bkg_track_y_photon_cut_highr; track y [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_photon_cut_highr",  new TH1D("dump_plane_bkg_track_time_photon_cut_highr","dump_plane_bkg_track_time_photon_cut_highr; t [ns]; Events",nbins, tarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_photon_cut_highr",  new TH1D("dump_plane_bkg_track_energy_photon_cut_highr","dump_plane_bkg_track_energy_photon_cut_highr; E [GeV]; Events",nbins, xarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rUp_photon_cut_highr",  new TH1D("dump_plane_bkg_track_rUp_photon_cut_highr","dump_plane_bkg_track_rUp_photon_cut_highr; r [mm]; Events",nRBins, rarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_rDn_photon_cut_highr",  new TH1D("dump_plane_bkg_track_rDn_photon_cut_highr","dump_plane_bkg_track_rDn_photon_cut_highr; r [mm]; Events",nRBins, rarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xUp_photon_cut_highr",  new TH1D("dump_plane_bkg_track_xUp_photon_cut_highr","dump_plane_bkg_track_xUp_photon_cut_highr; x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_xDn_photon_cut_highr",  new TH1D("dump_plane_bkg_track_xDn_photon_cut_highr","dump_plane_bkg_track_xDn_photon_cut_highr; x [mm]; Events",nXBins, xyarray)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr","dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr_morebins",  new TH1D("dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr_morebins","dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr","dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr_morebins",  new TH1D("dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr_morebins","dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr_morebins; #theta_{p} [rad]; Events",1600, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_cut_highr",  new TH1D("dump_plane_bkg_track_theta_photon_cut_highr","dump_plane_bkg_track_theta_photon_cut_highr; #theta_{p} [rad]; Events",800, 1.6, 3.2)));
+    allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon_cut_highr",  new TH1D("dump_plane_bkg_track_phi_photon_cut_highr","dump_plane_bkg_track_phi_photon_cut_highr; #phi_{p} [rad]; Events",6400, -3.2, 3.2)));
     
     long lineCounter   = 0;
     
@@ -346,41 +416,81 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
             else
                needNeutron = true;
 
-            if(needNeutron){
-                allHisto2Dict["dump_plane_bkg_track_x_track_y_neutron_cut"]->Fill(xPos, yPos, weight);
-                allHisto1Dict["dump_plane_bkg_track_x_neutron_cut"]->Fill(xPos, weight);
-                allHisto1Dict["dump_plane_bkg_track_y_neutron_cut"]->Fill(yPos, weight);
-                // allHistoDict["dump_plane_bkg_track_theta_track_phi_neutron_cut"]->Fill(theta, phi, weight);
-                allHisto1Dict["dump_plane_bkg_track_theta_neutron_cut"]->Fill(theta, weight);
-                
-                allHisto1Dict["dump_plane_bkg_track_phi_neutron_cut"]->Fill(phi, weight);
-                allHisto1Dict["dump_plane_bkg_track_time_neutron_cut"]->Fill(time, weight);
-                allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut"]->Fill(energyVal, weight);
-                if(vtx_x > x0){
-                    allHisto1Dict["dump_plane_bkg_track_rUp_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_xUp_neutron_cut"]->Fill(xPos, weight);
+            if(rValue < 1000){
+                if(needNeutron){
+                    allHisto2Dict["dump_plane_bkg_track_x_track_y_neutron_cut_lowr"]->Fill(xPos, yPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_x_neutron_cut_lowr"]->Fill(xPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_y_neutron_cut_lowr"]->Fill(yPos, weight);
+                    // allHistoDict["dump_plane_bkg_track_theta_track_phi_neutron_cut_lowr"]->Fill(theta, phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_theta_neutron_cut_lowr"]->Fill(theta, weight);
+                    
+                    allHisto1Dict["dump_plane_bkg_track_phi_neutron_cut_lowr"]->Fill(phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_time_neutron_cut_lowr"]->Fill(time, weight);
+                    allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut_lowr"]->Fill(energyVal, weight);
+                    if(vtx_x > x0){
+                        allHisto1Dict["dump_plane_bkg_track_rUp_neutron_cut_lowr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_lowr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xUp_neutron_cut_lowr"]->Fill(xPos, weight);
+                    }
+                    else{
+                        allHisto1Dict["dump_plane_bkg_track_rDn_neutron_cut_lowr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_lowr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xDn_neutron_cut_lowr"]->Fill(xPos, weight);
+                    }
+                    allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_lowr"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_cut_lowr"]->Fill(rValue, energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_weighted_cut_lowr"]->Fill(rValue, energyVal, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_neutron_cut_lowr"]->Fill(phi, phiPos, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_E_neutron_cut_lowr"]->Fill(time,energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_neutron_cut_lowr"]->Fill(time,rValue, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_cut_lowr"]->Fill(time,theta, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_neutron_weighted_cut_lowr"]->Fill(time,rValue, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_weighted_cut_lowr"]->Fill(time,theta, thetaWeight*weight);
                 }
-                else{
-                    allHisto1Dict["dump_plane_bkg_track_rDn_neutron_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_xDn_neutron_cut"]->Fill(xPos, weight);
+            }
+            else{
+                if(needNeutron){
+                    allHisto2Dict["dump_plane_bkg_track_x_track_y_neutron_cut_highr"]->Fill(xPos, yPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_x_neutron_cut_highr"]->Fill(xPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_y_neutron_cut_highr"]->Fill(yPos, weight);
+                    // allHistoDict["dump_plane_bkg_track_theta_track_phi_neutron_cut_highr"]->Fill(theta, phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_theta_neutron_cut_highr"]->Fill(theta, weight);
+                    
+                    allHisto1Dict["dump_plane_bkg_track_phi_neutron_cut_highr"]->Fill(phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_time_neutron_cut_highr"]->Fill(time, weight);
+                    allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut_highr"]->Fill(energyVal, weight);
+                    if(vtx_x > x0){
+                        allHisto1Dict["dump_plane_bkg_track_rUp_neutron_cut_highr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_neutron_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_neutron_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_neutron_weighted_cut_highr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xUp_neutron_cut_highr"]->Fill(xPos, weight);
+                    }
+                    else{
+                        allHisto1Dict["dump_plane_bkg_track_rDn_neutron_cut_highr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_neutron_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_neutron_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_neutron_weighted_cut_highr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xDn_neutron_cut_highr"]->Fill(xPos, weight);
+                    }
+                    allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut_highr"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_cut_highr"]->Fill(rValue, energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_weighted_cut_highr"]->Fill(rValue, energyVal, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_neutron_cut_highr"]->Fill(phi, phiPos, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_E_neutron_cut_highr"]->Fill(time,energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_neutron_cut_highr"]->Fill(time,rValue, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_cut_highr"]->Fill(time,theta, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_neutron_weighted_cut_highr"]->Fill(time,rValue, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_weighted_cut_highr"]->Fill(time,theta, thetaWeight*weight);
                 }
-                allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
-                allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_cut"]->Fill(rValue, energyVal, weight);
-                allHisto2Dict["dump_plane_bkg_track_r_track_E_neutron_weighted_cut"]->Fill(rValue, energyVal, rWeight*weight);
-                allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_neutron_cut"]->Fill(phi, phiPos, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_E_neutron_cut"]->Fill(time,energyVal, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_r_neutron_cut"]->Fill(time,rValue, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_cut"]->Fill(time,theta, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_r_neutron_weighted_cut"]->Fill(time,rValue, rWeight*weight);
-                allHisto2Dict["dump_plane_bkg_time_track_theta_neutron_weighted_cut"]->Fill(time,theta, thetaWeight*weight);
             }
         }
         ////// photon;
@@ -394,43 +504,85 @@ void makeDumpPlotsFromText(string weightBkwdNt="1.0", string weightBkwdPh="1.0",
             else
                needPhoton = true;
 
-            if(needPhoton){
-                allHisto2Dict["dump_plane_bkg_track_x_track_y_photon_cut"]->Fill(xPos, yPos, weight);
-                allHisto1Dict["dump_plane_bkg_track_x_photon_cut"]->Fill(xPos, weight);
-                allHisto1Dict["dump_plane_bkg_track_y_photon_cut"]->Fill(yPos, weight);
-                // allHistoDict["dump_plane_bkg_track_theta_track_phi_photon_cut"]->Fill(theta, phi, weight);
-                allHisto1Dict["dump_plane_bkg_track_theta_photon_cut"]->Fill(theta, weight);
-                
-                allHisto1Dict["dump_plane_bkg_track_phi_photon_cut"]->Fill(phi, weight);
-                allHisto1Dict["dump_plane_bkg_track_time_photon_cut"]->Fill(time, weight);
-                allHisto1Dict["dump_plane_bkg_track_energy_photon_cut"]->Fill(energyVal, weight);
-                
-                if(vtx_x > x0){
-                    allHisto1Dict["dump_plane_bkg_track_rUp_photon_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_xUp_photon_cut"]->Fill(xPos, weight);
-                }
-                else{
-                    allHisto1Dict["dump_plane_bkg_track_rDn_photon_cut"]->Fill(rValue, rWeight*weight);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_photon_cut"]->Fill(rValue, theta, weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
-                    allHisto1Dict["dump_plane_bkg_track_xDn_photon_cut"]->Fill(xPos, weight);
-                }
+            if(rValue < 1000){
+                if(needPhoton){
+                    allHisto2Dict["dump_plane_bkg_track_x_track_y_photon_cut_lowr"]->Fill(xPos, yPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_x_photon_cut_lowr"]->Fill(xPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_y_photon_cut_lowr"]->Fill(yPos, weight);
+                    // allHistoDict["dump_plane_bkg_track_theta_track_phi_photon_cut_lowr"]->Fill(theta, phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_theta_photon_cut_lowr"]->Fill(theta, weight);
+                    
+                    allHisto1Dict["dump_plane_bkg_track_phi_photon_cut_lowr"]->Fill(phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_time_photon_cut_lowr"]->Fill(time, weight);
+                    allHisto1Dict["dump_plane_bkg_track_energy_photon_cut_lowr"]->Fill(energyVal, weight);
+                    
+                    if(vtx_x > x0){
+                        allHisto1Dict["dump_plane_bkg_track_rUp_photon_cut_lowr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_lowr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xUp_photon_cut_lowr"]->Fill(xPos, weight);
+                    }
+                    else{
+                        allHisto1Dict["dump_plane_bkg_track_rDn_photon_cut_lowr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_lowr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_lowr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xDn_photon_cut_lowr"]->Fill(xPos, weight);
+                    }
 
-                allHisto2Dict["dump_plane_bkg_track_r_track_theta_photon_weighted_cut"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
-                allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_cut"]->Fill(rValue, energyVal, weight);
-                allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_weighted_cut"]->Fill(rValue, energyVal, rWeight*weight);
-                allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_photon_cut"]->Fill(phi, phiPos, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_E_photon_cut"]->Fill(time,energyVal, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_r_photon_cut"]->Fill(time,rValue, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_theta_photon_cut"]->Fill(time,theta, weight);
-                allHisto2Dict["dump_plane_bkg_time_track_r_photon_weighted_cut"]->Fill(time,rValue, rWeight*weight);
-                allHisto2Dict["dump_plane_bkg_time_track_theta_photon_weighted_cut"]->Fill(time,theta, thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_theta_photon_weighted_cut_lowr"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_cut_lowr"]->Fill(rValue, energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_weighted_cut_lowr"]->Fill(rValue, energyVal, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_photon_cut_lowr"]->Fill(phi, phiPos, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_E_photon_cut_lowr"]->Fill(time,energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_photon_cut_lowr"]->Fill(time,rValue, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_photon_cut_lowr"]->Fill(time,theta, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_photon_weighted_cut_lowr"]->Fill(time,rValue, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_photon_weighted_cut_lowr"]->Fill(time,theta, thetaWeight*weight);
+                }
+            }
+            else{
+                if(needPhoton){
+                    allHisto2Dict["dump_plane_bkg_track_x_track_y_photon_cut_highr"]->Fill(xPos, yPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_x_photon_cut_highr"]->Fill(xPos, weight);
+                    allHisto1Dict["dump_plane_bkg_track_y_photon_cut_highr"]->Fill(yPos, weight);
+                    // allHistoDict["dump_plane_bkg_track_theta_track_phi_photon_cut_highr"]->Fill(theta, phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_theta_photon_cut_highr"]->Fill(theta, weight);
+                    
+                    allHisto1Dict["dump_plane_bkg_track_phi_photon_cut_highr"]->Fill(phi, weight);
+                    allHisto1Dict["dump_plane_bkg_track_time_photon_cut_highr"]->Fill(time, weight);
+                    allHisto1Dict["dump_plane_bkg_track_energy_photon_cut_highr"]->Fill(energyVal, weight);
+                    
+                    if(vtx_x > x0){
+                        allHisto1Dict["dump_plane_bkg_track_rUp_photon_cut_highr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_photon_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rUp_track_theta_backward_photon_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaUp_photon_weighted_cut_highr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xUp_photon_cut_highr"]->Fill(xPos, weight);
+                    }
+                    else{
+                        allHisto1Dict["dump_plane_bkg_track_rDn_photon_cut_highr"]->Fill(rValue, rWeight*weight);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_photon_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto2Dict["dump_plane_bkg_track_rDn_track_theta_backward_photon_cut_highr"]->Fill(rValue, theta, weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_thetaDn_photon_weighted_cut_highr_morebins"]->Fill(theta, thetaWeight*weight*bkwdThetaWt);
+                        allHisto1Dict["dump_plane_bkg_track_xDn_photon_cut_highr"]->Fill(xPos, weight);
+                    }
+
+                    allHisto2Dict["dump_plane_bkg_track_r_track_theta_photon_weighted_cut_highr"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_cut_highr"]->Fill(rValue, energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_track_r_track_E_photon_weighted_cut_highr"]->Fill(rValue, energyVal, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_track_phi_pos_phi_photon_cut_highr"]->Fill(phi, phiPos, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_E_photon_cut_highr"]->Fill(time,energyVal, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_photon_cut_highr"]->Fill(time,rValue, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_photon_cut_highr"]->Fill(time,theta, weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_r_photon_weighted_cut_highr"]->Fill(time,rValue, rWeight*weight);
+                    allHisto2Dict["dump_plane_bkg_time_track_theta_photon_weighted_cut_highr"]->Fill(time,theta, thetaWeight*weight);
+                }
             }
         }
         if(cmpPlt && (nntrn > nntrnLim) && (npho > nphoLim)) break;

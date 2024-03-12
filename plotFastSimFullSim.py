@@ -33,7 +33,6 @@ def DrawHistsRatio(FirstTH1, LegendName, PlotColor, xrange1down, xrange1up, yran
    tex1 = TLatex(); tex2 = TLatex(); tex3 = TLatex()
    L = [tex1, tex2, tex3]
    TexMaker(L, doAtlas, doLumi, noRatio, do80, do59)
-   FirstTH1[0].GetYaxis().SetRangeUser(yrange1down,yrange1up)
    FirstTH1[0].GetXaxis().SetRangeUser(xrange1down,xrange1up)
    WaterMark = TexWaterMark('Preliminary')
    for i in range(0, len(FirstTH1)):
@@ -48,18 +47,23 @@ def DrawHistsRatio(FirstTH1, LegendName, PlotColor, xrange1down, xrange1up, yran
      if "track_r" in FirstTH1[i].GetName():
         FirstTH1[i].Scale(1.0, "width")
      w = FirstTH1[i].Integral()
-     FirstTH1[i].Scale(1./w)
+     if w!=0:
+        FirstTH1[i].Scale(1./w)
+     else:
+        FirstTH1[i].Scale(1.)
     #  print("integral inside: ", w)
      FirstTH1[i] = SetHistColorEtc(FirstTH1[i], PlotColor[i])
      legend1.AddEntry(FirstTH1[i],LegendName[i], "lp")
    
-   
+      
+#    FirstTH1[0].GetYaxis().SetRangeUser(5e-5,2.0)
+   FirstTH1[0].GetYaxis().SetRangeUser(5e-5,3e-1)
    FirstTH1[0].GetXaxis().SetLabelSize(0.0);
-   FirstTH1[0].GetYaxis().SetTitle("Entries");
+   FirstTH1[0].GetYaxis().SetTitle("Normalized entries");
    FirstTH1[0].SetLineWidth(2)
    print("drawOption: ", drawOption)
    FirstTH1[0].Draw(drawOption)
-   print("integral outside 0: ", FirstTH1[0].Integral())
+#    print("integral outside 0: ", FirstTH1[0].Integral())
     
    #WaterMark.Draw("sames")
    gPad.SetTickx()
@@ -71,7 +75,7 @@ def DrawHistsRatio(FirstTH1, LegendName, PlotColor, xrange1down, xrange1up, yran
    for i in range(1, len(FirstTH1)):
      FirstTH1[i].SetLineWidth(1)
      FirstTH1[i].Draw("hist sames"+drawOption)
-     print("integral outside 1: ", FirstTH1[i].Integral())
+    #  print("integral outside 1: ", FirstTH1[i].Integral())
      gPad.Modified(); 
      gPad.Update();
      
@@ -142,7 +146,11 @@ def main():
     args = parser.parse_args()
 
     # outDir = "RandomFastSimvsFullSimLUXE2023_DiffRWeight_DetId"+args.detid
-    outDir = "FastSimvsFullSimLUXE2023_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid
+    ### functional weight to neutron and photon
+    # outDir = "FastSimvsFullSimLUXE2023_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid
+
+    ### GAN weights
+    outDir = "GANFastSimvsFullSimLUXE2024_GANModel_run14_DetId"+args.detid
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -181,7 +189,12 @@ def main():
         # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_DetId"+args.detid+"_CompareWith_1.3timesNeutron_2.5timesPhoton_BackwardInThetaMore3AndRLess300.root","READ")
         fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_DetId"+args.detid+".root","READ")
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted_NoECutNtrn_DetId"+args.detid+".root", "READ")
-        fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid+".root", "READ")
+        #### functional weights
+        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid+".root", "READ")
+        #### GAN weights
+        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_GANFastSim_0p06BX_OnlyNeutron_NoPhoton_v1_DetId"+args.detid+".root", "READ")
+        # fastSimFile = TFile(inDir+"/combined_v21_DetId"+args.detid+".root", "READ")
+        fastSimFile = TFile(inDir+"/GANModel_run14_DetId"+args.detid+".root", "READ")
 
 
         
@@ -241,7 +254,8 @@ def main():
     latexName2  = 'z='+str(zPos)+' mm'
     leftLegend  = True
 
-    LegendName  = ["FullSim", "FastSim"]
+    # LegendName  = ["FullSim", "FastSim"]
+    LegendName  = ["FullSim", "FastSim (GAN)"]
     PlotColor   = [2, 4]
 
 
@@ -254,8 +268,8 @@ def main():
     xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
-    yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
-    yAxisLow    = 0.5
+    yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -273,8 +287,8 @@ def main():
     xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
-    yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
-    yAxisLow    = 0.5
+    yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -295,8 +309,8 @@ def main():
     xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
-    yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
-    yAxisLow    = 0.5
+    yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -318,8 +332,8 @@ def main():
     xAxisLow    = FirstTH1[0].GetXaxis().GetBinCenter(1)
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
-    yAxisHigh   = FirstTH1[0].GetMaximum()*1e3
-    yAxisLow    = 0.5
+    yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -339,7 +353,7 @@ def main():
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
     yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
-    yAxisLow    = 0.5
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -359,7 +373,7 @@ def main():
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
     yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
-    yAxisLow    = 0.5
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -441,7 +455,7 @@ def main():
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
     yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
-    yAxisLow    = 0.5
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -461,7 +475,7 @@ def main():
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
     yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
-    yAxisLow    = 0.5
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 
@@ -481,7 +495,7 @@ def main():
     xAxisHigh   = FirstTH1[0].GetXaxis().GetBinCenter(FirstTH1[0].GetNbinsX())
     
     yAxisHigh   = FirstTH1[0].GetMaximum()*1e2
-    yAxisLow    = 0.5
+    yAxisLow    = 0.01
     
     xAxisTitle  = FirstTH1[0].GetXaxis().GetTitle()
 

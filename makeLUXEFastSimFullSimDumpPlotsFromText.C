@@ -44,7 +44,7 @@ double getR(double x,double y){
 };
 
 
-void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted.txt", float bx=1.0, int det=33, bool isFullSim=false){
+void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted.txt", int det=33, float bx=1.0, bool isFullSim=false){
     
     auto start = high_resolution_clock::now();
     int nNt = 0;
@@ -89,8 +89,12 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
             ;
     }
 
-    string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
+    /// for local files
+    // string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
+    /// for DESY files
+    // string inDir = "/nfs/dust/luxe/user/santraar/TextSamples_October2021/DumpFromFastSim/FastSimFiles_LUXEDump/";
     // string inDir = "/Volumes/Study/Weizmann_PostDoc/Sasha_work/OutputFile/ReprocessedBkgTracksAfterTDR"
+    string inDir = "/srv01/agrp/arkas/GANFastSim/";
     
 
     ifstream inFile;

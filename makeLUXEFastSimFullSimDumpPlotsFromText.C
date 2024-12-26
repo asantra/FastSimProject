@@ -1,8 +1,9 @@
-//#### run: inside root: .L makeLUXEFastSimFullSimDumpPlotsFromText.C++ && makeLUXEFastSimFullSimDumpPlotsFromText()
+//#### run: inside root: 
+// .L makeLUXEFastSimFullSimDumpPlotsFromText.C++ makeLUXEFastSimFullSimDumpPlotsFromText("<input text file string>", <detid integer>, 1.0, boolean to choose fullsim (true) or fastsim (false))
 //#### Here the histograms are made from FullSim, coming from Sasha
 // This is used to run FastSim and FullSim samples at test surfaces. 
 // The plots will be later compared, so normalization (number of particles) are important.
-// This uses LUXE dump geometry.
+// This uses LUXE dump geometry, so dump is inclined wrt z axis.
 
 #include <vector>
 #include <TMath.h>
@@ -46,7 +47,11 @@ double getR(double x,double y){
 
 void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUXEBkgOutputFile/Geant4Files/OutputFile/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted.txt", int det=33, float bx=1.0, bool isFullSim=false){
     
+    /// start the timer
     auto start = high_resolution_clock::now();
+
+
+    /// these are needed to control the normalization of the histograms
     int nNt = 0;
     int nPh = 0;
     long nNtLim = 99999999999999;
@@ -54,6 +59,7 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
 
     /// need less number of events from FullSim
     if(isFullSim){
+        /// sampling plane, just outside the dump
         if(det==33){
             /// this is limited to save time. They should not be used when comparing with the full stat
             /// these numbers should match the numbers used in makeDumpParticlesFromHistogramLUXE
@@ -63,6 +69,7 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
             // nPhLim=13531005;
             // nNtLim=54977353;
         }
+        /// first test surface from the dump
         else if (det==32){
             /// fullsim entries
                nNtLim = 44919187;
@@ -74,6 +81,7 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
             // nNtLim = 483526;
             // nPhLim = 126613;
         }
+        /// second test surface from the dump
         else if (det==31){
             /// fullsim entries
                nNtLim = 34844633;
@@ -89,14 +97,10 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
             ;
     }
 
-    /// for local files
-    // string inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile/";
-    /// for DESY files
-    // string inDir = "/nfs/dust/luxe/user/santraar/TextSamples_October2021/DumpFromFastSim/FastSimFiles_LUXEDump/";
-    // string inDir = "/Volumes/Study/Weizmann_PostDoc/Sasha_work/OutputFile/ReprocessedBkgTracksAfterTDR"
+    
     string inDir = "/srv01/agrp/arkas/GANFastSim/";
     
-
+    /// working with the text file
     ifstream inFile;
     
     inFile.open(bkgFileName);
@@ -109,13 +113,13 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     foutname                = foutname.substr(0, foutname.find_last_of("."));
     std::string rootoutname = inDir+foutname;
     if(isFullSim)
-        rootoutname             += std::string("_NoECutNtrn_DetId"+to_string(det)+".root");
+        rootoutname             += std::string("_NoECutNtrn_DetId"+to_string(det)+".root"); /// fullsim output file with histograms
     else 
-        rootoutname             += std::string("_DetId"+to_string(det)+".root");
+        rootoutname             += std::string("_DetId"+to_string(det)+".root"); /// fastsim output file with histograms
     
     cout << "The output file: " << rootoutname << endl;
 
-    //### this is LUXE geometry
+    //### this is LUXE geometry, dump is inclined wrt z axis
     double zPos = 0.0;
     if (det==33)
         zPos = 6621.91;
@@ -180,10 +184,11 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
             xyarray[i] = (8000+(i-6500)*20);
     }
     
+    /// open the histograms
     map<string, TH1D*> allHisto1Dict;
     map<string, TH2D*> allHisto2Dict;
     
-    
+    /// 2D plot
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut", new TH2D("dump_plane_bkg_track_r_track_theta_neutron_weighted_cut","dump_plane_bkg_track_r_track_theta_neutron_weighted_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 6400, 1.6, 3.2)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_theta_neutron_cut", new TH2D("dump_plane_bkg_track_r_track_theta_neutron_cut","dump_plane_bkg_track_r_track_theta_neutron_cut; r [mm]; #theta_{p} [rad]", nRBins, rarray, 6400, 1.6, 3.2)));
     allHisto2Dict.insert(make_pair("dump_plane_bkg_track_r_track_E_neutron_weighted_cut", new TH2D("dump_plane_bkg_track_r_track_E_neutron_weighted_cut","dump_plane_bkg_track_r_track_E_neutron_weighted_cut; r [mm]; E [GeV]", nRBins, rarray, nbins, xarray)));
@@ -210,11 +215,6 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     allHisto2Dict.insert(make_pair("dump_plane_bkg_time_track_theta_photon_weighted_cut", new TH2D("dump_plane_bkg_time_track_theta_photon_weighted_cut","dump_plane_bkg_time_track_theta_photon_weighted_cut; time [ns]; #theta_{p} [rad]", nbins, tarray, 1600, 1.6, 3.2)));
     
     
-    
-    
-    
-    
-    
     ///### 1D plot
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_time_neutron_cut", new TH1D("dump_plane_bkg_track_time_neutron_cut","dump_plane_bkg_track_time_neutron_cut; t [ns]; Events",nbins, tarray)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_energy_neutron_cut", new TH1D("dump_plane_bkg_track_energy_neutron_cut","dump_plane_bkg_track_energy_neutron_cut; E [GeV]; Events",nbins, xarray)));
@@ -234,6 +234,8 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_theta_photon_cut", new TH1D("dump_plane_bkg_track_theta_photon_cut","dump_plane_bkg_track_theta_photon_cut; #theta_{p} [rad]; Events",6400, 1.6, 3.2)));
     allHisto1Dict.insert(make_pair("dump_plane_bkg_track_phi_photon_cut", new TH1D("dump_plane_bkg_track_phi_photon_cut","dump_plane_bkg_track_phi_photon_cut; #phi_{p} [rad]; Events",640, -3.2, 3.2)));
     
+
+
     long lineCounter   = 0;
 
     int bxNumber(-99999), pdgId(-99999), trackId(-99999), detId(-99999);
@@ -241,9 +243,11 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
     double vtx_x(-99999.0), vtx_y(-99999.0), vtx_z(-99999.0);
     int parent_id(-99999), physprocess(-99999);
     double pxx(-99999.0), pyy(-99999.0), pzz(-99999.0), time(-99999.0);
-    
-    // ###### bxNumber << pdg << track_id << det_id << xx << yy << eneg << ev_weight << vtx_x << vtx_y << vtx_z << parentid << pxx << pyy << pzz << physicsprocess << time
         
+    /// read the text file
+    /// the text file should have these columns in this order:
+    // ###### bxNumber << pdg << track_id << det_id << xx << yy << eneg << ev_weight << vtx_x << vtx_y << vtx_z << parentid << pxx << pyy << pzz << physicsprocess << time
+
     while(inFile >> bxNumber >> pdgId >> trackId >> detId >> xPos >> yPos >> energyVal >> weight >> vtx_x >> vtx_y >> vtx_z >> parent_id >> pxx >> pyy >> pzz >> physprocess >> time){
         
         lineCounter += 1;
@@ -256,7 +260,6 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
         // # if(lineCounter > 1000000)
         // #     break
         
-        // ### this is to reject bkg particles from calorimeter
             
         vector<double> angles;
         angles.clear();
@@ -289,16 +292,11 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
         else
             thetaWeight  = 1./(2*TMath::Pi()*TMath::Sin(theta));
 
-        // # thetaWeight  = 1./(2*math.pi*math.sin(theta))
-
-
-        
     
         //### neutrons
         if(pdgId == 2112){
             nNt += 1;
             if (nNt < nNtLim){
-            // if (true){
                 allHisto1Dict["dump_plane_bkg_track_theta_neutron_cut"]->Fill(theta, weight);
                 allHisto1Dict["dump_plane_bkg_track_theta_neutron_weighted_cut"]->Fill(theta, thetaWeight*weight);
                 allHisto1Dict["dump_plane_bkg_track_phi_neutron_cut"]->Fill(phi, weight);
@@ -306,7 +304,6 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
                 allHisto1Dict["dump_plane_bkg_track_r_neutron_cut"]->Fill(rValue, rWeight*weight);
                 allHisto1Dict["dump_plane_bkg_track_r_small_neutron_cut"]->Fill(rValue, rWeight*weight);
                 allHisto1Dict["dump_plane_bkg_track_energy_neutron_cut"]->Fill(energyVal, weight);
-
 
                 allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_cut"]->Fill(rValue, theta, weight);
                 allHisto2Dict["dump_plane_bkg_track_r_track_theta_neutron_weighted_cut"]->Fill(rValue, theta, rWeight*thetaWeight*weight);
@@ -326,7 +323,6 @@ void makeLUXEFastSimFullSimDumpPlotsFromText(string bkgFileName="/Volumes/OS/LUX
         if(pdgId == 22){
             nPh += 1;
             if (nPh < nPhLim){
-            // if(true){
                 allHisto1Dict["dump_plane_bkg_track_theta_photon_cut"]->Fill(theta, weight);
                 allHisto1Dict["dump_plane_bkg_track_theta_photon_weighted_cut"]->Fill(theta, thetaWeight*weight);
                 allHisto1Dict["dump_plane_bkg_track_phi_photon_cut"]->Fill(phi, weight);

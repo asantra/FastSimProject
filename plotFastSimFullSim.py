@@ -137,7 +137,6 @@ def DrawHistsRatio(FirstTH1, LegendName, PlotColor, xrange1down, xrange1up, yran
 
 def main():
     gROOT.SetBatch()
-
     parser = argparse.ArgumentParser(description='Code to get 2D plots')
     parser.add_argument('-det', action="store", dest="detid", type=str, default="33")
     parser.add_argument('-timesNt', action="store", dest="weightValueNt", type=str, default="1.0")
@@ -145,9 +144,6 @@ def main():
     parser.add_argument('-version', action="store", dest="versionVal", type=str, default="1")
     args = parser.parse_args()
 
-    # outDir = "RandomFastSimvsFullSimLUXE2023_DiffRWeight_DetId"+args.detid
-    ### functional weight to neutron and photon
-    # outDir = "FastSimvsFullSimLUXE2023_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid
 
     ### GAN weights
     outDir = "GANFastSimvsFullSimLUXE2024_GANModel_run14_DetId"+args.detid
@@ -179,6 +175,7 @@ def main():
     else:
         zPos = 6621.91;
     
+    ### input directory where the input histograms reside
     inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile"
 
     try:
@@ -187,6 +184,7 @@ def main():
         # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat.root","READ")
         # fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId"+args.detid+"_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
         # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_DetId"+args.detid+"_CompareWith_1.3timesNeutron_2.5timesPhoton_BackwardInThetaMore3AndRLess300.root","READ")
+        ### put the fullsim histogram root file here
         fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_DetId"+args.detid+".root","READ")
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted_NoECutNtrn_DetId"+args.detid+".root", "READ")
         #### functional weights
@@ -194,9 +192,8 @@ def main():
         #### GAN weights
         # fastSimFile = TFile(inDir+"/LUXEDumpFiles_GANFastSim_0p06BX_OnlyNeutron_NoPhoton_v1_DetId"+args.detid+".root", "READ")
         # fastSimFile = TFile(inDir+"/combined_v21_DetId"+args.detid+".root", "READ")
+        ### put the fastsim histogram root file here
         fastSimFile = TFile(inDir+"/GANModel_run14_DetId"+args.detid+".root", "READ")
-
-
         
     except:
        print("There is something wrong with at least one of the files.")
@@ -248,6 +245,7 @@ def main():
 
     
     #### plotting the signal and background
+    ### Don't change the following plot settings
     TeVTag=False; doSumw2=False; doAtlas=False; doLumi=False; noRatio=False; do80=False; do59=False; drawOption=""
     drawline    = True
     logy        = True
@@ -258,7 +256,7 @@ def main():
     LegendName  = ["FullSim", "FastSim (GAN)"]
     PlotColor   = [2, 4]
 
-
+    ### To write on the canvas
     latexName   = "photon"
 
     FirstTH1    = [dump_plane_bkg_track_r_photon_cut, dump_plane_bkg_track_r_photon_weighted]
@@ -382,6 +380,12 @@ def main():
     h2.GetYaxis().SetTitle("#frac{FullSim}{FastSim}")
 
     DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
+
+
+
+
+    ### Now work with neutron
+    ### write on the canvas
     latexName   = "neutron"
 
 
@@ -506,5 +510,6 @@ def main():
     DrawHistsRatio(FirstTH1, LegendName, PlotColor, xAxisLow, xAxisHigh, yAxisLow, yAxisHigh, xAxisTitle, outDir+"/"+FirstTH1[0].GetName(), h2, 1.0, 1.0, drawline, logy, latexName, latexName2, TeVTag, doSumw2, doAtlas, doLumi, noRatio, do80, do59,"width")
 
 
+### call the main function
 if __name__=="__main__":
     main()

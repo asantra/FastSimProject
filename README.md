@@ -82,5 +82,10 @@ makeLUXEFastSimFullSimDumpPlotsFromText("<input text file string>", <detid integ
 3. Name a directory here: `outDir`. This is where the plots will be saved. If this directory does not exist, the code will create one.
 4. Change the `inDir` to point to the path where your root files with histograms stay.
 5. Change the `fullSimFile` and `fastSimFile` to point to your fullsim and fastsim files.
+6. Run this code:
+```
+python plotFastSimFullSim.py -det <number>
+```
+7. Here `<number>` is 33 for the sampling plane, 32 for the first test surface from the dump and 31 for the second test surface from the dump.
 
 

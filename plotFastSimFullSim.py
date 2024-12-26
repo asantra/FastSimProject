@@ -6,7 +6,6 @@ from syslog import LOG_SYSLOG
 import argparse
 from ROOT import *
 from copy import copy, deepcopy
-sys.path.insert(0, '/Users/arkasantra/arka/include')
 from Functions import *
 from collections import OrderedDict
 
@@ -150,18 +149,6 @@ def main():
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    ### this is Dump only geometry
-    # if int(args.detid)==33:
-    #     zPos = -350
-    #     ###zPos = 6621.91
-    # elif int(args.detid)==32:
-    #     zPos = -5000
-    # elif int(args.detid)==31:
-    #     zPos = -10000
-    # elif int(args.detid)==30:
-    #     zPos = -15000
-    # else:
-    #     zPos = -350
 
     ### this is LUXE geometry
     if int(args.detid)==33:
@@ -179,19 +166,8 @@ def main():
     inDir = "/Users/arkasantra/arka/Sasha_Work/OutputFile"
 
     try:
-        #fullSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId"+args.detid+"_trackInfo.root","READ")
-        #fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId33_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
-        # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_SmallStat.root","READ")
-        # fastSimFile = TFile(inDir+"/RestrictedDumpOnlyFiles_DetId"+args.detid+"_trackInfo_RandomGeneration_v7_AllParts.root", "READ")
-        # fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_DetId"+args.detid+"_CompareWith_1.3timesNeutron_2.5timesPhoton_BackwardInThetaMore3AndRLess300.root","READ")
         ### put the fullsim histogram root file here
         fullSimFile = TFile(inDir+"/LUXEDumpFiles_FullSim_0p06BX_DetId"+args.detid+"_NoECutNtrn_DetId"+args.detid+".root","READ")
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_NoECutNtrn_Processed_Sorted_NoECutNtrn_DetId"+args.detid+".root", "READ")
-        #### functional weights
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_FastSim_0p06BX_"+args.weightValueNt+"timesNeutron_"+args.weightValuePh+"timesPhoton_v"+args.versionVal+"_DetId"+args.detid+".root", "READ")
-        #### GAN weights
-        # fastSimFile = TFile(inDir+"/LUXEDumpFiles_GANFastSim_0p06BX_OnlyNeutron_NoPhoton_v1_DetId"+args.detid+".root", "READ")
-        # fastSimFile = TFile(inDir+"/combined_v21_DetId"+args.detid+".root", "READ")
         ### put the fastsim histogram root file here
         fastSimFile = TFile(inDir+"/GANModel_run14_DetId"+args.detid+".root", "READ")
         
@@ -213,17 +189,6 @@ def main():
     dump_plane_bkg_track_phi_neutron_cut             = fullSimFile.Get("dump_plane_bkg_track_phi_neutron_cut")
 
 
-    ### for dump only geometry
-    # dump_plane_bkg_track_r_photon_weighted          = fastSimFile.Get("dump_plane_bkg_track_r_photon_weighted")
-    # dump_plane_bkg_track_theta_photon_weighted      = fastSimFile.Get("dump_plane_bkg_track_theta_photon_weighted")
-    # dump_plane_bkg_track_E_photon                   = fastSimFile.Get("dump_plane_bkg_track_E_photon")
-    # dump_plane_bkg_track_time_photon                = fastSimFile.Get("dump_plane_bkg_track_time_photon")
-
-    # dump_plane_bkg_track_r_neutron_weighted         = fastSimFile.Get("dump_plane_bkg_track_r_neutron_weighted")
-    # dump_plane_bkg_track_theta_neutron_weighted     = fastSimFile.Get("dump_plane_bkg_track_theta_neutron_weighted")
-    # dump_plane_bkg_track_E_neutron                  = fastSimFile.Get("dump_plane_bkg_track_E_neutron")
-    # dump_plane_bkg_track_time_neutron               = fastSimFile.Get("dump_plane_bkg_track_time_neutron")
-    
     
     ### for LUXE geometry
     dump_plane_bkg_track_r_photon_weighted          = fastSimFile.Get("dump_plane_bkg_track_r_photon_cut")

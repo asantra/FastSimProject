@@ -37,11 +37,27 @@ The last number shows the runid: any unique integer.
 1. Prepare the text file from the Geant4 tree. 
 This text file will be used for making histograms to compare the FastSim and FullSim distribution
 
-2. For this, the code setup inside `Geant4FileProcessing` directory.
+2. For this, use the code setup inside `Geant4FileProcessing` directory.
 
-3. 
+3. Put the output root file after the Geant4 processing in a text file. Suppose the name is `A.txt`.
+4. In `runEBeamOnly.sh`, change the line:
+```
+filename="LUXEFastSim_PreparedFromPart2C.txt"
+```
+to
+```
+filename="A.txt"
+```
 
+5. In `process_track_tree_draw_v8.C`, write the `outDir` location.
+This is the folder that will save the processed file in a text format.
 
+6. Run this setup inside `Geant4FileProcessing`:
+```
+source runEBeamOnly.sh
+```
+
+7. The output will be a text file containing the track information at dump surface, as well as test surfaces.
 
 
 ## Prepare the histograms for comparison purpose
